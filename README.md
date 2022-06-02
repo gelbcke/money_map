@@ -51,7 +51,7 @@ Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão
 </p>
 
 ***
-### Web server Setup
+### Configrando Servidor WEB
 ***
 1. Install Apache   
     `$ sudo apt update`   
@@ -64,27 +64,26 @@ Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão
     `$ sudo apt install php8.0 libapache2-mod-php8.0 php-mysql8.0`
 
 ***
-### Project/Database Setup
-***
-1. Run `git clone https://github.com/gelbcke/moneymap.git`
-2. Create a MySQL database for the project
+### Configurando Banco de Dados
+1. Crie um banco de dados MySQL para o projeto
     * ```mysql -u root -p```   
     * ```create database money_map;```
       
-3. Create user and give privileges
+2. Crie o usuário e dê as permissões necessárias
     * ```CREATE USER 'money_map'@'localhost' IDENTIFIED BY 'your_password_here';```
     * ```GRANT ALL PRIVILEGES ON money_map.* TO 'money_map'@'localhost';```  
     * ```quit;```
 
 ***
-### Final Setup
+### Configuração Final
 ***
-1. Go to folder project
+1. Execute `git clone https://github.com/gelbcke/moneymap.git`
+2. Vá para a pasta do projeto 
    * `cd /var/www/html/moneymap`
-2. From the projects root run
+3. Da pasta raiz do projeto, execute
    * `sudo cp .env.example .env`
-3. Configure your `.env` file
-4. From the projects root folder run
+4. Configure seu arquivo `.env`
+5. Da pasta raiz do projeto, execute
    * `composer install`
    * `php artisan key:generate`
    * `php artisan migrate`
@@ -101,11 +100,14 @@ Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão
    * ```sudo chmod -R ug+rwx storage bootstrap/cache```   
    * ```sudo chmod -R 777 ./bootstrap/cache/```
 
-#### Credentials from SEED
-- User: admin@moneymap.com
-- Password: secret
+***
+### Informações importantes
+***
+#### Credenciais do SEED
+- Usuário: admin@moneymap.com
+- Senha: secret
 
-Example `.env` file:
+Exemplo do arquivo `.env`:
 ```
 APP_NAME="Money MAP"
 APP_ENV=local
@@ -133,3 +135,6 @@ MAIL_ENCRYPTION=null
 ```
 * * * * * php /var/www/html/moneymap/artisan schedule:run
 ```
+
+***
+##### FrontEnd by [ColorlibHQ - AdminLTE](https://github.com/ColorlibHQ/AdminLTE)
