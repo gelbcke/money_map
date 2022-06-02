@@ -1,65 +1,133 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# ![MoneyMap](public/assets/dist/img/banner.png) 
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão (seed) o orçamento "50/35/15"
 
-## About Laravel
+#### * 50% da receita, será destinado para despesas "Essenciais".
+    - Aluguel;
+    - Água;
+    - Energia;
+    - Internet;
+    - Educação;
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+#### * 35% da receita, será destinado para despesas de "Lazer".
+    - Serviços de Streaming;
+    - Diversão;
+    
+#### * 15% da receita, será destinado para Investimentos.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-## Learning Laravel
+***
+## Funções/Módulos
+***
+### Despesas
+    Todas as despesas são registradas tendo como informação o Banco/Conta utilizado, a forma de pagamento e o orçamento ao qual essa despesa pertence;
+### Entradas
+    Todas as fontes de renda devem ser informadas para que sejam criados os orçamentos e indicadores na dashboard;
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+### Transferências
+    Caso seja necessário realizar alguma transferência entre contas de uma mesma pessoa, ou entre pessoas que seguem o mesmo orçamento. A mesma deverá ser inserida neste módulo, pois assim é possível acompanhar o saldo de cada conta bancária;
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Investimentos
+    Registro de investimentos realizados, sendo possível inserir no período que preferir o rendimento de cada um;
 
-## Laravel Sponsors
+### Faturas
+    Caso haja utilização de Cartão de Crédito, será possível acompanhar os gastos por meio de uma "fatura pessoal";
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+### Carteiras
+    As carteiras tem como objetivo agrupar Cartões/Bancos/Dinheiro fisico de forma que possa ser compartilhado, ou não, com uma segunda pessoa que utilize o mesmo orçamento;
 
-### Premium Partners
+### Bancos e Contas
+    Todas as suas contas serão cadastradas aqui para informar despesas, investimento e etc.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+### Orçamento
+    Caso deseje alterar o orçamento padrão do sistema;
 
-## Contributing
+***
+## Screenshots
+***
+# ![MoneyMap_light](public/assets/screenshots/light_dash.png) 
+# ![MoneyMap_dark](public/assets/screenshots/dark_dash.png) 
+***
+## Web server Setup
+***
+1. Install Apache   
+    `$ sudo apt update`   
+    `$ sudo apt install apache2`
+   
+2. Install MySQL Server   
+    `$ sudo apt install mysql-server`
+   
+3. Install PHP     
+    `$ sudo apt install php8.0 libapache2-mod-php8.0 php-mysql8.0`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+***
+## Project/Database Setup
+***
+1. Run `git clone https://github.com/gelbcke/moneymap.git`
+2. Create a MySQL database for the project
+    * ```mysql -u root -p```   
+    * ```create database money_map;```
+      
+3. Create user and give privileges
+    * ```CREATE USER 'money_map'@'localhost' IDENTIFIED BY 'your_password_here';```
+    * ```GRANT ALL PRIVILEGES ON money_map.* TO 'money_map'@'localhost';```  
+    * ```quit;```
 
-## Code of Conduct
+***
+## Final Setup
+***
+1. Go to folder project
+   * `cd /var/www/html/moneymap`
+2. From the projects root run
+   * `sudo cp .env.example .env`
+3. Configure your `.env` file
+4. From the projects root folder run
+   * `composer install`
+   * `php artisan key:generate`
+   * `php artisan migrate`
+   * `php artisan db:seed`
+   * `php artisan optimize`  
+   * `composer dump-autoload`
+   
+### Set Folders and Files Permissions
+   * ```sudo chmod -R 777 ./```   
+   * ```sudo chown -R www-data:www-data ./```   
+   * ```sudo find ./ -type f -exec chmod 644 {} \;```   
+   * ```sudo find ./ -type d -exec chmod 755 {} \;```
+   * ```sudo chgrp -R www-data storage bootstrap/cache```
+   * ```sudo chmod -R ug+rwx storage bootstrap/cache```   
+   * ```sudo chmod -R 777 ./bootstrap/cache/```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Credentials from SEED
+- User: admin@moneymap.com
+- Password: secret
 
-## Security Vulnerabilities
+Example `.env` file:
+```
+APP_NAME="Money MAP"
+APP_ENV=local
+APP_DEBUG=true
+APP_KEY=SomeRandomString
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+DB_HOST=localhost
+DB_DATABASE=money_map
+DB_USERNAME=money_map
+DB_PASSWORD=your_password
 
-## License
+CACHE_DRIVER=file
+SESSION_DRIVER=file
+QUEUE_DRIVER=sync
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
-# money_map
+MAIL_DRIVER=smtp
+MAIL_HOST=mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+```
+
+###CRON Tasks
+```
+* * * * * php /var/www/html/moneymap/artisan schedule:run
+```
