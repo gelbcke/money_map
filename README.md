@@ -1,4 +1,4 @@
-<img src="public/assets/dist/img/banner.png" width="100%">
+<img src="public/assets/dist/img/banner_1.0.0.png" width="100%">
 
 Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão o orçamento "50/35/15", sendo:
 
