@@ -1,55 +1,57 @@
-# ![MoneyMap](public/assets/dist/img/banner.png) 
+<img src="public/assets/dist/img/banner.png" width="100%">
 
-Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão (seed) o orçamento "50/35/15"
+Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão o orçamento "50/35/15", sendo:
 
-#### * 50% da receita, será destinado para despesas "Essenciais".
-    - Aluguel;
-    - Água;
-    - Energia;
-    - Internet;
-    - Educação;
+#### - 50% da receita, será destinado para despesas "Essenciais".
+- Aluguel;
+- Água;
+- Energia;
+- Internet;
+- Educação;
 
-#### * 35% da receita, será destinado para despesas de "Lazer".
-    - Serviços de Streaming;
-    - Diversão;
+#### - 35% da receita, será destinado para despesas de "Lazer".
+- Serviços de Streaming;
+- Diversão;
     
-#### * 15% da receita, será destinado para Investimentos.
-
-
+#### - 15% da receita, será destinado para Investimentos.
 
 ***
-## Funções/Módulos
+### Funções/Módulos
 ***
-### Despesas
-    Todas as despesas são registradas tendo como informação o Banco/Conta utilizado, a forma de pagamento e o orçamento ao qual essa despesa pertence;
-### Entradas
-    Todas as fontes de renda devem ser informadas para que sejam criados os orçamentos e indicadores na dashboard;
+#### Despesas
+- Todas as despesas são registradas tendo como informação o Banco/Conta utilizado, a forma de pagamento e o orçamento ao qual essa despesa pertence;
+#### Entradas
+- Todas as fontes de renda devem ser informadas para que sejam criados os orçamentos e indicadores na dashboard;
 
-### Transferências
-    Caso seja necessário realizar alguma transferência entre contas de uma mesma pessoa, ou entre pessoas que seguem o mesmo orçamento. A mesma deverá ser inserida neste módulo, pois assim é possível acompanhar o saldo de cada conta bancária;
+#### Transferências
+- Caso seja necessário realizar alguma transferência entre contas de uma mesma pessoa, ou entre pessoas que seguem o mesmo orçamento. A mesma deverá ser inserida neste módulo, pois assim é possível acompanhar o saldo de cada conta bancária;
 
-### Investimentos
-    Registro de investimentos realizados, sendo possível inserir no período que preferir o rendimento de cada um;
+#### Investimentos
+- Registro de investimentos realizados, sendo possível inserir no período que preferir o rendimento de cada um;
 
-### Faturas
-    Caso haja utilização de Cartão de Crédito, será possível acompanhar os gastos por meio de uma "fatura pessoal";
+#### Faturas
+- Caso haja utilização de Cartão de Crédito, será possível acompanhar os gastos por meio de uma "fatura pessoal";
 
-### Carteiras
-    As carteiras tem como objetivo agrupar Cartões/Bancos/Dinheiro fisico de forma que possa ser compartilhado, ou não, com uma segunda pessoa que utilize o mesmo orçamento;
+#### Carteiras
+- As carteiras tem como objetivo agrupar Cartões/Bancos/Dinheiro fisico de forma que possa ser compartilhado, ou não, com uma segunda pessoa que utilize o mesmo orçamento;
 
-### Bancos e Contas
-    Todas as suas contas serão cadastradas aqui para informar despesas, investimento e etc.
+#### Bancos e Contas
+- Todas as suas contas serão cadastradas aqui para informar despesas, investimento e etc.
 
-### Orçamento
-    Caso deseje alterar o orçamento padrão do sistema;
+#### Orçamento
+- Caso deseje alterar o orçamento padrão do sistema;
 
 ***
-## Screenshots
+### Screenshots
 ***
-# ![MoneyMap_light](public/assets/screenshots/light_dash.png) 
-# ![MoneyMap_dark](public/assets/screenshots/dark_dash.png) 
+
+<p align="center">
+  <img src="public/assets/screenshots/light_dash_1.0.0.png" width="100%" title="Light Dashboard">
+  <img src="public/assets/screenshots/dark_dash_1.0.0.png" width="100%" title="Dark Dashboard">
+</p>
+
 ***
-## Web server Setup
+### Web server Setup
 ***
 1. Install Apache   
     `$ sudo apt update`   
@@ -62,7 +64,7 @@ Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão
     `$ sudo apt install php8.0 libapache2-mod-php8.0 php-mysql8.0`
 
 ***
-## Project/Database Setup
+### Project/Database Setup
 ***
 1. Run `git clone https://github.com/gelbcke/moneymap.git`
 2. Create a MySQL database for the project
@@ -75,7 +77,7 @@ Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão
     * ```quit;```
 
 ***
-## Final Setup
+### Final Setup
 ***
 1. Go to folder project
    * `cd /var/www/html/moneymap`
@@ -90,7 +92,7 @@ Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão
    * `php artisan optimize`  
    * `composer dump-autoload`
    
-### Set Folders and Files Permissions
+#### Set Folders and Files Permissions
    * ```sudo chmod -R 777 ./```   
    * ```sudo chown -R www-data:www-data ./```   
    * ```sudo find ./ -type f -exec chmod 644 {} \;```   
@@ -99,7 +101,7 @@ Desenvolvido em Laravel para controle de depesesas pessoais, usando como padrão
    * ```sudo chmod -R ug+rwx storage bootstrap/cache```   
    * ```sudo chmod -R 777 ./bootstrap/cache/```
 
-### Credentials from SEED
+#### Credentials from SEED
 - User: admin@moneymap.com
 - Password: secret
 
@@ -127,7 +129,7 @@ MAIL_PASSWORD=null
 MAIL_ENCRYPTION=null
 ```
 
-###CRON Tasks
+#### CRON Tasks
 ```
 * * * * * php /var/www/html/moneymap/artisan schedule:run
 ```
