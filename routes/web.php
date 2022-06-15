@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('profile/settings', ['as' => 'profile.settings', 'uses' => 'App\Http\Controllers\ProfileController@settings']);
     Route::get('{page}', ['as' => 'page.index', 'uses' => 'App\Http\Controllers\PageController@index']);
     Route::post('incomes/cancel_rec/{id}', 'App\Http\Controllers\IncomeController@cancel_rec')->name('incomes.cancel_rec');
+    Route::get('incomes/confirm_recepit/{id}', 'App\Http\Controllers\IncomeController@confirm_recepit')->name('incomes.confirm_recepit');
     Route::get('user_groups/get_in/{group_id}/{user_id}', 'App\Http\Controllers\UserGroupController@GetInGroup')->name('user_groups.get_in');
     Route::get('user_groups/get_out/{group_id}/{user_id}', 'App\Http\Controllers\UserGroupController@GetOutGroup')->name('user_groups.get_out');
     Route::post('user_groups/remove_user/{group_id}/{user_id}', 'App\Http\Controllers\UserGroupController@remove_user')->name('user_groups.remove_user');
