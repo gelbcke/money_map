@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\UserGroup;
+use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -19,10 +21,11 @@ class UserGroupController extends Controller
      */
     public function index()
     {
-        //
         $user_groups = UserGroup::where('owner_id', Auth::user()->id)->get();
 
-        return view('user_groups.index', compact('user_groups'));
+        $user_belongTo = User::where('id', Auth::user()->id)->get();
+
+        return view('user_groups.index', compact('user_groups', 'user_belongTo'));
     }
 
     /**
@@ -44,28 +47,29 @@ class UserGroupController extends Controller
     public function store(Request $request)
     {
         //
-        $user = Auth::user()->id;
+        $user = Auth::user();
 
         $request->validate([
             'name' => 'required'
         ]);
 
-        $create_group = UserGroup::create($request->all() + ['owner_id' => $user]);
+        $create_group = UserGroup::create(
+            $request->all() +
+                [
+                    'owner_id' => $user->id
+                    //'user_id' => ["$user->id"]
+                ]
+        );
 
-        //Verifica todas as colunas que pertencem ao usuário, e adiciona ID do Grupo
-        $columns = 'Tables_in_' . env('DB_DATABASE');
-        $tables = DB::select('SHOW TABLES');
+        //Insert user on own group
+        User::where('id', $user->id)->update(['group_id' => $create_group->id]);
 
-        foreach ($tables as $table) {
-            //Verifica se a tabela possuí a coluna
-            if(Schema::hasColumn($table->$columns, 'group_id') && Schema::hasColumn($table->$columns, 'user_id')) {
-                DB::table($table->$columns)->where('user_id', $user)->update(['group_id' => $create_group->id]);
-            }
-        }
+        $this->GetInGroup($create_group->id, $user->id);
 
         return redirect()->route('user_groups.index')
             ->with('success', 'Grupo de usuários cadastrado com sucesso!');
     }
+
 
     /**
      * Display the specified resource.
@@ -107,16 +111,21 @@ class UserGroupController extends Controller
      */
     public function update(Request $request, UserGroup $userGroup)
     {
-        //
         $request->validate([
-            'users_id'=>'required',
+            'users_id' => 'required',
         ]);
 
-        User::where('id', $request->input('users_id'))
-            ->update(['group_id' => $userGroup->id]);
+        $user = User::where('id', $request->input('users_id'));
 
-        return redirect()->route('user_groups.show', $userGroup->id)
-            ->with('success', 'User Added successfully');
+        if ($user->value('group_id') == NULL) {
+            User::where('id', $request->input('users_id'))
+                ->update(['group_id' => $userGroup->id]);
+
+            return redirect()->route('user_groups.show', $userGroup->id)
+                ->with('success', 'User Added successfully');
+        } else {
+            return back()->with('error', 'This user already belongs to another group!');
+        }
     }
 
     /**
@@ -126,19 +135,25 @@ class UserGroupController extends Controller
      * @param \App\Models\UserGroup $userGroup
      * @return \Illuminate\Http\Response
      */
-    public function remove_user($id, $group_id)
+    public function remove_user($group_id, $user_id)
     {
-        //
-        if(UserGroup::find($group_id)->owner_id == Auth::user()->id) {
-            User::where('id', $id)
-                ->update(['group_id' => 0]);
-            return redirect()->route('user_groups.show', $group_id)
-                ->with('success', 'Usuário removido com sucesso');
-        }else{
-            return redirect()->route('user_groups.show', $group_id)
-                ->with('error', 'Você não possuí permissão para remover usuários desse grupo!');
-        }
+        try {
+            if (UserGroup::find($group_id)->owner_id == Auth::user()->id) {
+                User::where('id', $user_id)
+                    ->update(['group_id' => NULL]);
 
+                $this->GetOutGroup($group_id, $user_id);
+
+                return redirect()->route('user_groups.show', $group_id)
+                    ->with('success', 'Usuário removido com sucesso');
+            } else {
+                return redirect()->route('user_groups.show', $group_id)
+                    ->with('error', 'Você não possuí permissão para remover usuários desse grupo!');
+            }
+        } catch (Exception $e) {
+            return back()->withError($e->getMessage())
+                ->withInput();
+        }
     }
 
     /**
@@ -149,20 +164,99 @@ class UserGroupController extends Controller
      */
     public function destroy(UserGroup $userGroup)
     {
-        //Remove o grupo do banco
-        $userGroup->delete();
-
-        //Verifica todas as colunas que pertencem ao grupo, e remove
-        $columns = 'Tables_in_' . env('DB_DATABASE');
-        $tables = DB::select('SHOW TABLES');
-        foreach ($tables as $table) {
-            //Verifica se a tabela possuí a coluna
-            if(Schema::hasColumn($table->$columns, 'group_id')) {
-                DB::table($table->$columns)->where('group_id', $userGroup->id)->update(['group_id' => NULL]);
+        try {
+            foreach (User::where('group_id', $userGroup->id)->get() as $user) {
+                $this->GetOutGroup($userGroup->id, $user->id);
             }
-        }
 
-        return redirect()->route('user_groups.index')
-            ->with('success', 'Grupo removido com sucesso!');
+            User::where('group_id', $userGroup->id)
+                ->update(['group_id' => NULL]);
+
+            //Remove o grupo do banco
+            $userGroup->delete();
+
+            return redirect()->route('user_groups.index')
+                ->with('success', 'Grupo removido com sucesso!');
+        } catch (Exception $e) {
+            return back()->withError($e->getMessage())
+                ->withInput();
+        }
+    }
+
+    public function GetInGroup($group_id, $user_id)
+    {
+        try {
+            $getGroup = UserGroup::where('id', $group_id);
+
+            if ($getGroup->value('user_id') == NULL) {
+                //Insert Group Creator
+                $getGroup->update(['user_id' => ["$user_id"]]);
+            } else {
+                //Insert Accepet groupIn
+                $getUsersIds = $getGroup->value('user_id');
+                $users_id = json_encode([
+                    implode("[]", $getUsersIds), $user_id
+                ]);
+                $getGroup->update(['user_id' => $users_id]);
+            }
+
+            //Check all Tables
+            $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+            if (UserGroup::where('id', $group_id)->exists()) {
+                foreach ($tables as $table) {
+                    //Verifica se a tabela possuí a coluna
+                    if ((Schema::hasColumn($table, 'group_id')) && (Schema::hasColumn($table, 'user_id'))) {
+                        DB::table($table)
+                            ->where('user_id', $user_id)
+                            ->update(['group_id' => $group_id]);
+                    }
+                }
+                return back()
+                    ->with('success', 'Ingressado no Grupo!');
+            } else {
+                return back()->with('error', 'Esse Grupo não existe!');
+            }
+        } catch (\Throwable $e) {
+            return back()->withError($e->getMessage())
+                ->withInput();
+        }
+    }
+
+    public function GetOutGroup($group_id, $user_id)
+    {
+        try {
+            //Insert Reject/Delete 
+            $getGroup = UserGroup::where('id', $group_id);
+            $getOutGroup = array_diff($getGroup->value('user_id'), array($user_id));
+            $getGroup->update(['user_id' => $getOutGroup]);
+
+            User::where([
+                ['group_id', $group_id],
+                ['id', $user_id]
+            ])
+                ->update(['group_id' => NULL]);
+
+            //Check all Tables
+            $tables = DB::connection()->getDoctrineSchemaManager()->listTableNames();
+            if (UserGroup::where('id', $group_id)->exists()) {
+                foreach ($tables as $table) {
+                    //Verifica se a tabela possuí a coluna
+                    if ((Schema::hasColumn($table, 'group_id')) && (Schema::hasColumn($table, 'user_id'))) {
+                        DB::table($table)
+                            ->where([
+                                ['user_id', $user_id],
+                                ['group_id', $group_id]
+                            ])
+                            ->update(['group_id' => NULL]);
+                    }
+                }
+            }
+
+            return back()
+                ->with('success', 'Saída do grupo realizada com sucesso!');
+        } catch (\Throwable $e) {
+            return back()->withError($e->getMessage())
+                ->withInput();
+        }
     }
 }

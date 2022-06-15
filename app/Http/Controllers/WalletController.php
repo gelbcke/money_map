@@ -18,7 +18,7 @@ class WalletController extends Controller
         //
         $wallets = Wallet::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->get();
 
@@ -72,7 +72,7 @@ class WalletController extends Controller
         //
         $wallets = Wallet::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->get();
 

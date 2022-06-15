@@ -21,6 +21,12 @@ return [
         'no_group' => 'Nenhum grupo de usuários disponível',
         'create_new' => 'Criar um grupo',
         'add_user_to_group' => 'Adicionar Usuário ao Grupo',
-        'add_user' => 'Adicionar Usuário'
+        'add_user' => 'Adicionar Usuário',
+        'my_groups' => 'Meus Grupos',
+        'get_in_group' => 'Entrar no Grupo',
+        'get_out_group' => 'Sair do Grupo',
+        'groups_i_belong' => 'Grupos que faço parte',
+        'out_of_group' => 'Você ainda não compartilha seus dados com o grupo!',
+        'in_of_group' => 'Você está compartilhando seus dados com esse grupo!',
     ]
 ];

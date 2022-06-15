@@ -19,7 +19,7 @@ class IncomeController extends Controller
         //
         $incomes = Income::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->orderBy('date', 'desc')
             ->get();
@@ -36,7 +36,7 @@ class IncomeController extends Controller
         //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('wallet_id', '!=', 0)
             ->get();
@@ -62,7 +62,7 @@ class IncomeController extends Controller
         ]);
 
         $income = Income::create($request->all() + ['user_id' => $user]);
-        if(Auth::user()->group_id != NULL){
+        if (Auth::user()->group_id != NULL) {
             $income->group_id = Auth::user()->group_id;
         }
         $income->org_id = $income->id;
@@ -134,5 +134,14 @@ class IncomeController extends Controller
     public function destroy(Income $income)
     {
         //
+    }
+
+    public function confirm_recepit($id)
+    {
+        Income::where('org_id', $id)
+            ->update(['confirmed' => 1]);
+
+        return redirect()->route('incomes.index')
+            ->with('message', 'Income confirmed!');
     }
 }

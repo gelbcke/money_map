@@ -48,7 +48,7 @@ class HomeController extends Controller
 
         $last_expenses = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->OrderBy('date', 'desc')
             ->take(5)
@@ -56,7 +56,7 @@ class HomeController extends Controller
 
         $sum_expenses_month = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereNull('parcels')
             ->select(
@@ -69,7 +69,7 @@ class HomeController extends Controller
 
         $sum_investments_month = Investment::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('operation', 'IN')
             ->select(
@@ -82,7 +82,7 @@ class HomeController extends Controller
 
         $rec_expenses = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereNotNull('rec_expense')
             ->OrderBy('budget_id', 'desc');
@@ -91,7 +91,7 @@ class HomeController extends Controller
             ->join('expenses', 'credit_parcels.expense_id', '=', 'expenses.id')
             ->where(function ($query) {
                 $query->where('user_id', Auth::user()->id)
-                    ->orWhere('group_id', Auth::user()->group_id);
+                    ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
             ->whereYear('credit_parcels.date', '>=', $thisYear)
             ->whereMonth('credit_parcels.date', '>=', $thisMonth)
@@ -108,12 +108,13 @@ class HomeController extends Controller
 
         $exp_by_budget_this_month = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereYear('date', $thisYear)
             ->whereMonth('date', $thisMonth)
             ->whereNull('parcels')
-            ->select('budget_id',
+            ->select(
+                'budget_id',
                 DB::raw('sum(value) as total')
             )
             ->groupBy('budget_id')
@@ -121,12 +122,13 @@ class HomeController extends Controller
 
         $exp_by_budget_prev_month = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereYear('date', $prevYear)
             ->whereMonth('date', $prevMonth)
             ->whereNull('parcels')
-            ->select('budget_id',
+            ->select(
+                'budget_id',
                 DB::raw('sum(value) as total')
             )
             ->groupBy('budget_id')
@@ -137,11 +139,12 @@ class HomeController extends Controller
          */
         $save_by_budget_prev_month = Investment::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereYear('date', $thisYear)
             ->whereMonth('date', $prevMonth)
-            ->select('budget_id',
+            ->select(
+                'budget_id',
                 DB::raw('sum(value) as total')
             )
             ->groupBy('budget_id')
@@ -149,11 +152,12 @@ class HomeController extends Controller
 
         $save_by_budget_this_month = Investment::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereYear('date', $thisYear)
             ->whereMonth('date', $thisMonth)
-            ->select('budget_id',
+            ->select(
+                'budget_id',
                 DB::raw('sum(value) as total')
             )
             ->groupBy('budget_id')
@@ -164,7 +168,7 @@ class HomeController extends Controller
          */
         $get_out_budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('status', 1)
             ->where('operation', 'OUT')
@@ -173,7 +177,7 @@ class HomeController extends Controller
 
         $get_save_budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('status', 1)
             ->where('operation', 'SAVE')
@@ -183,7 +187,7 @@ class HomeController extends Controller
 
         $get_parcels = Expense::where(function ($query) {
             $query->where('expenses.user_id', Auth::user()->id)
-                ->orWhere('expenses.group_id', Auth::user()->group_id);
+                ->orWhere('expenses.group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereNotNull('expenses.parcels')
             ->whereMonth('expenses.end_parcels', '>=', $thisMonth)
@@ -200,23 +204,25 @@ class HomeController extends Controller
         /***/
         $get_income_prev_month = Income::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
+            ->where('confirmed', 1)
             ->whereYear('date', $thisYear)
             ->whereMonth('date', $prevMonth)
             ->sum('value');
 
         $get_income_this_month = Income::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
+            ->where('confirmed', 1)
             ->whereYear('date', $thisYear)
             ->whereMonth('date', $thisMonth)
             ->sum('value');
-/*
+        /*
         $get_expense_month_1 = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->whereYear('date', $thisYear)
             ->whereMonth('date', $thisMonth)
@@ -226,7 +232,7 @@ class HomeController extends Controller
             ->join('expenses', 'credit_parcels.expense_id', '=', 'expenses.id')
             ->where(function ($query) {
                 $query->where('user_id', Auth::user()->id)
-                    ->orWhere('group_id', Auth::user()->group_id);
+                    ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
             ->whereYear('credit_parcels.date', $thisYear)
             ->whereMonth('credit_parcels.date', $thisMonth)
@@ -237,7 +243,7 @@ class HomeController extends Controller
             ->join('expenses', 'credit_parcels.expense_id', '=', 'expenses.id')
             ->where(function ($query) {
                 $query->where('user_id', Auth::user()->id)
-                    ->orWhere('group_id', Auth::user()->group_id);
+                    ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
             ->whereYear('credit_parcels.date', $thisYear)
             ->whereMonth('credit_parcels.date', $thisMonth)
@@ -249,18 +255,20 @@ class HomeController extends Controller
 
         $investments = Investment::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })->get();
 
         /***/
         $total_income = Income::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
-        })->sum('value');
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })
+            ->where('confirmed', 1)
+            ->sum('value');
 
         $total_expenses = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereNull('parcels')
             ->sum('value');
@@ -269,7 +277,7 @@ class HomeController extends Controller
             ->join('expenses', 'credit_parcels.expense_id', '=', 'expenses.id')
             ->where(function ($query) {
                 $query->where('user_id', Auth::user()->id)
-                    ->orWhere('group_id', Auth::user()->group_id);
+                    ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
             ->where('credit_parcels.date', '<', $today)
             ->sum('credit_parcels.parcel_vl');
@@ -279,17 +287,17 @@ class HomeController extends Controller
 
         $ck_budget = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('status', 1)
             ->count();
         $ck_bank = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })->count();
         $ck_wallet = Wallet::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })->count();
 
         if ($ck_budget == 0) {
@@ -303,8 +311,11 @@ class HomeController extends Controller
         }
         $first_run = $fc;
 
-        return view('home',
-            compact(['exp_by_budget_this_month',
+        return view(
+            'home',
+            compact(
+                [
+                    'exp_by_budget_this_month',
                     'exp_by_budget_prev_month',
                     'save_by_budget_prev_month',
                     'save_by_budget_this_month',
@@ -325,6 +336,7 @@ class HomeController extends Controller
                     'parceled_expenses',
                     'first_run',
                 ]
-            ));
+            )
+        );
     }
 }

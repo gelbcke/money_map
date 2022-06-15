@@ -29,7 +29,7 @@ class TransferController extends Controller
         //
         $transfers = Transfer::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->OrderBy('created_at', 'desc')
             ->get();
@@ -47,7 +47,7 @@ class TransferController extends Controller
         //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->OrderBy('name', 'desc')
             ->get();

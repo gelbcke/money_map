@@ -12,10 +12,11 @@ class UserGroup extends Model
     public $fillable = [
         'name',
         'owner_id',
+        'user_id'
     ];
 
     protected $casts = [
-        'users_id' => 'array'
+        'user_id' => 'array'
     ];
 
     public function user()
