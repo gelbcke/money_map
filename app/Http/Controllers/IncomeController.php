@@ -19,7 +19,7 @@ class IncomeController extends Controller
         //
         $incomes = Income::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->orderBy('date', 'desc')
             ->get();
@@ -36,7 +36,7 @@ class IncomeController extends Controller
         //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->where('wallet_id', '!=', 0)
             ->get();

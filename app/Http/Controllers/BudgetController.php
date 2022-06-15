@@ -20,7 +20,7 @@ class BudgetController extends Controller
         //
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->OrderBy('budget', 'desc')
             ->get();
@@ -37,7 +37,7 @@ class BudgetController extends Controller
         //
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhere('group_id', explode(" ",Auth::user()->group_id));
         })
             ->OrderBy('budget', 'desc')
             ->get();
@@ -58,7 +58,7 @@ class BudgetController extends Controller
 
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->where('status', 1)
             ->sum('budget');
@@ -112,7 +112,7 @@ class BudgetController extends Controller
         //
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->OrderBy('budget', 'desc')
             ->get();
@@ -139,7 +139,7 @@ class BudgetController extends Controller
 
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->where('status', 1)
             ->where('id', '!=', $budget->id)

@@ -8,6 +8,7 @@ return [
     'see_users' => 'Ver Usuários',
     'date' => 'Data',
     'value' => 'Valor',
+    'status' => 'Status',
     'max_value' => 'Valor (max)',
     'limit' => 'Limite %',
     'total' => 'Total',
@@ -34,6 +35,8 @@ return [
         'actions' => 'Ações',
         'create' => 'Criar',
         'edit' => 'Editar',
+        'delete' => 'Apagar',
+        'get_out' => 'Sair',
         'register' => 'Registrar',
         'login' => 'Login',
         'go_back' => 'Voltar',
@@ -58,11 +61,11 @@ return [
         'report' => 'Relatório'
     ],
     'info' =>
-        [
-            'registred_by' => 'Registrado por',
-            'registred_at' => 'Registrado as',
-            'belong_to' => 'Pertence á'
-        ],
+    [
+        'registred_by' => 'Registrado por',
+        'registred_at' => 'Registrado as',
+        'belong_to' => 'Pertence á'
+    ],
     'select' =>
     [
         'timezone' => 'Selecione um Fuso Horário'

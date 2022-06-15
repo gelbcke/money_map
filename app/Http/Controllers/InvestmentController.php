@@ -21,21 +21,21 @@ class InvestmentController extends Controller
         //
         $investments = Investment::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->groupBy('org_id')
             ->get();
 
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->whereNotNull('f_invest')
             ->get();
 
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->where('operation', 'SAVE')
             ->get();

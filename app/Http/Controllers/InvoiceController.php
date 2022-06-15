@@ -23,7 +23,7 @@ class InvoiceController extends Controller
         //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->where('f_cred', 1)
             ->get();

@@ -23,7 +23,7 @@ class BankController extends Controller
         //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->get();
 
@@ -40,7 +40,7 @@ class BankController extends Controller
         //
         $wallets = Wallet::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', Auth::user()->group_id);
+                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
         })
             ->where('status', 1)
             ->get();
