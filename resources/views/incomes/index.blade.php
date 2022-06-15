@@ -41,6 +41,9 @@
                                     {{__("general.value")}}
                                 </th>
                                 <th>
+                                    {{__("general.details")}}
+                                </th>
+                                <th>
                                     {{__("general.wallet")}} / {{__("general.account")}}
                                 </th>
                                 <th style="width: 20%">
@@ -60,6 +63,9 @@
                                             <i class="fas fa-sync-alt" title="{{__("incomes.recurring")}}"></i>
                                         </small>
                                         @endif
+                                    </td>
+                                    <td>
+                                        {{ $value->details }}
                                     </td>
                                     <td>
                                         <b>{{$value->bank->name}}</b> ({{$value->bank->wallet->name}})
