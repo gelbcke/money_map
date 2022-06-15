@@ -35,7 +35,7 @@ class ExpenseController extends Controller
         //
         $expenses = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->OrderBy('date', 'desc')
             ->get();
@@ -43,7 +43,7 @@ class ExpenseController extends Controller
         if ($request->has('rec_exp')) {
             $expenses = Expense::where(function ($query) {
                 $query->where('user_id', Auth::user()->id)
-                    ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                    ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
                 ->orWhereNotNull('rec_expense')
                 ->OrderBy('date', 'desc')
@@ -63,15 +63,16 @@ class ExpenseController extends Controller
         //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('wallet_id', '!=', 0)
             ->get();
 
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
+            ->where('status', 1)
             ->get();
 
         return view('expenses.create', compact('banks', 'budgets'));
@@ -89,10 +90,9 @@ class ExpenseController extends Controller
         $user = Auth::user()->id;
         $end_parcels = NULL;
 
-        if(Auth::user()->group_id != NULL){
+        if (Auth::user()->group_id != NULL) {
             $group_id = Auth::user()->group_id;
-        }else
-        {
+        } else {
             $group_id = NULL;
         }
 
@@ -110,10 +110,10 @@ class ExpenseController extends Controller
         }
 
         $expense = Expense::create($request->all() + [
-                'user_id' => $user,
-                'end_parcels' => $end_parcels,
-                'group_id' => $group_id
-            ]);
+            'user_id' => $user,
+            'end_parcels' => $end_parcels,
+            'group_id' => $group_id
+        ]);
 
         if ($request->input('parcels') != NULL) {
             $request->validate([
@@ -201,5 +201,4 @@ class ExpenseController extends Controller
         return redirect()->route('expenses.index')
             ->with('success', 'Despesa ' . $expense->value . ' excluída com sucesso');
     }
-
 }
