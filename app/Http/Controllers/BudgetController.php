@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Budget;
 use App\Models\Expense;
+use App\Models\UserGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\Console\Input\Input;
@@ -17,10 +18,9 @@ class BudgetController extends Controller
      */
     public function index()
     {
-        //
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->OrderBy('budget', 'desc')
             ->get();
@@ -37,7 +37,7 @@ class BudgetController extends Controller
         //
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhere('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhere('group_id', explode(" ", Auth::user()->group_id));
         })
             ->OrderBy('budget', 'desc')
             ->get();
@@ -58,7 +58,7 @@ class BudgetController extends Controller
 
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('status', 1)
             ->sum('budget');
@@ -70,21 +70,20 @@ class BudgetController extends Controller
             'budget' => 'required'
         ]);
 
-        if(Auth::user()->group_id != NULL){
+        if (Auth::user()->group_id != NULL) {
             $group_id = Auth::user()->group_id;
-        }else
-        {
+        } else {
             $group_id = NULL;
         }
 
-        if($sum_budget <= 100) {
+        if ($sum_budget <= 100) {
             Budget::create($request->all() + ['user_id' => $user, 'group_id' => $group_id]);
 
             return redirect()->route('budgets.index')
                 ->with('success', 'Orçamento registrado com sucesso!');
-        }else{
+        } else {
             return redirect()->route('budgets.index')
-                ->with('error', 'A soma dos orçamentos é superior á 100% (Você possuí '. 100-$budgets.'% disponível para alocar)');
+                ->with('error', 'A soma dos orçamentos é superior á 100% (Você possuí ' . 100 - $budgets . '% disponível para alocar)');
         }
     }
 
@@ -112,7 +111,7 @@ class BudgetController extends Controller
         //
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->OrderBy('budget', 'desc')
             ->get();
@@ -139,29 +138,27 @@ class BudgetController extends Controller
 
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('status', 1)
             ->where('id', '!=', $budget->id)
             ->sum('budget');
 
-        if(Auth::user()->group_id != NULL){
+        if (Auth::user()->group_id != NULL) {
             $group_id = Auth::user()->group_id;
-        }else
-        {
+        } else {
             $group_id = NULL;
         }
 
-        if(($budgets + $request->input('budget')) <= 100) {
+        if (($budgets + $request->input('budget')) <= 100) {
             $budget->update($request->all() + ['user_id' => $user, 'group_id' => $group_id]);
 
             return redirect()->route('budgets.edit', $budget->id)
                 ->with('success', 'Orçamento Editado com sucesso!');
-        }else{
+        } else {
             return redirect()->route('budgets.edit', $budget->id)
                 ->with('error', 'A soma dos orçamentos é superior á 100%');
         }
-
     }
 
     /**
@@ -215,10 +212,9 @@ class BudgetController extends Controller
         //
         $user = Auth::user()->id;
 
-        if(Auth::user()->group_id != NULL){
+        if (Auth::user()->group_id != NULL) {
             $group_id = Auth::user()->group_id;
-        }else
-        {
+        } else {
             $group_id = NULL;
         }
 
