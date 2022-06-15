@@ -23,7 +23,7 @@ class InvoiceController extends Controller
         //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('f_cred', 1)
             ->get();
@@ -80,8 +80,10 @@ class InvoiceController extends Controller
         foreach ($banks as $bank) {
             $cc_info = CreditCard::where('bank_id', $bank->id);
 
-            $start_date = Carbon::now()->startOfMonth()->subMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
-            $end_date   = Carbon::now()->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
+            $start_date = Carbon::now()->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
+            $end_date   = Carbon::now()->startOfMonth()->addMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
+
+            //dd($start_date . " - " . $end_date);
 
             $cc_parcels = CreditParcels::where('bank_id', $bank->id)
                 ->whereBetween('date', [$start_date, $end_date])
@@ -99,7 +101,6 @@ class InvoiceController extends Controller
         }
 
         return view('invoices.details', compact('invoices', 'cc_expenses', 'cc_parcels', 'user', 'cc_info', 'now'));
-
     }
 
     /**
