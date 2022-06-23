@@ -15,9 +15,12 @@ jobs:
     - name: Update Money MAP
       working-directory: /var/www/html/money_map
       run: |
-        git pull origin main
+        php artisan down
+        git fetch origin main
+        git reset --hard origin/main
         php artisan migrate
         php artisan db:seed
         composer dump-autoload
         composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-        php artisan optimze       
+        php artisan optimze 
+        php artisan up
