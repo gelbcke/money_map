@@ -12,10 +12,12 @@ jobs:
     runs-on: skynet
 
     steps:
-    - uses: actions/checkout@v3
     - name: Update Money MAP
       working-directory: /var/www/html/money_map
       run: |
+        git pull origin main
+        php artisan migrate
+        php artisan db:seed
+        composer dump-autoload
         composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-        chmod -R 777 storage bootstrap/cache
-          
+        php artisan optimze       
