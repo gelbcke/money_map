@@ -1,0 +1,21 @@
+name: MoneyMAP updater
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  laravel-tests:
+
+    runs-on: skynet
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Update Money MAP
+      working-directory: /var/www/html/money_map
+      run: |
+        composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+        chmod -R 777 storage bootstrap/cache
+          
