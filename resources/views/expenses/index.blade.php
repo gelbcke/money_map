@@ -25,8 +25,9 @@
 					<div class="card-header">
 						<h5 class="card-title">{{ __('expenses.expenses') }}</h5>
 						<div class="card-tools">
-							<a href="{{ route('expenses.index', 'rec_exp') }}"
-								class="btn btn-sm btn-default">{{ __('expenses.recurring_expenses') }}</a>
+							<a href="{{ route('expenses.index', 'rec_exp') }}" class="btn btn-sm btn-default">
+								{{ __('expenses.recurring_expenses') }}
+							</a>
 							<a href="{{ route('expenses.create') }}" class="btn btn-sm btn-info">{{ __('expenses.create_new') }}</a>
 						</div>
 					</div>
@@ -49,7 +50,7 @@
 									<th>
 										{{ __('expenses.operation.title') }}
 									</th>
-									<th style="width: 60px">
+									<th style="width: 30px">
 									</th>
 								</thead>
 								<tbody>
@@ -73,7 +74,9 @@
 												@endif
 											</td>
 											<td>
-												{{ $value->details }}
+												<a href="{{ route('expenses.show', $value->id) }}">
+													{{ $value->details }}
+												</a>
 											</td>
 											<td>
 												<b>{{ $value->bank->name }}</b> - {{ $value->bank->payment_method }}
@@ -94,9 +97,6 @@
 												@endif
 											</td>
 											<td>
-												<a href="{{ route('expenses.show', $value->id) }}">
-													<i class="fa fa-eye"></i>
-												</a>
 												<a href="{{ route('expenses.edit', $value->id) }}">
 													<i class="fa fa-edit"></i>
 												</a>

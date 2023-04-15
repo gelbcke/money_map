@@ -45,7 +45,7 @@ class ExpenseController extends Controller
                 $query->where('user_id', Auth::user()->id)
                     ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
-                ->orWhereNotNull('rec_expense')
+                ->where('rec_expense', 1)
                 ->OrderBy('date', 'desc')
                 ->get();
         }
