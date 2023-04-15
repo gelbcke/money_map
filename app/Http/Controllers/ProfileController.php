@@ -47,7 +47,7 @@ class ProfileController extends Controller
      * @param \App\Http\Requests\ProfileRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(ProfileRequest $request)
+    public function update(Request $request)
     {
         auth()->user()->update($request->all());
 
@@ -60,7 +60,7 @@ class ProfileController extends Controller
      * @param \App\Http\Requests\PasswordRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function password(PasswordRequest $request)
+    public function password(Request $request)
     {
         auth()->user()->update(['password' => Hash::make($request->get('password'))]);
 
