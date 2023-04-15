@@ -98,8 +98,9 @@ class HomeController extends Controller
             ->select(
                 DB::raw('sum(credit_parcels.parcel_vl) as total'),
                 DB::raw("month (credit_parcels.date) as month"),
+                DB::raw("year (credit_parcels.date) as year"),
             )
-            ->groupBy('month')
+            ->groupby('year', 'month')
             ->get();
 
         /*
@@ -273,13 +274,15 @@ class HomeController extends Controller
             ->whereNull('parcels')
             ->sum('value');
 
+
         $parcels_payed = CreditParcels::select('*')
             ->join('expenses', 'credit_parcels.expense_id', '=', 'expenses.id')
             ->where(function ($query) {
                 $query->where('user_id', Auth::user()->id)
                     ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
-            ->where('credit_parcels.date', '<', $today)
+            ->whereYear('credit_parcels.date', $thisYear)
+            ->whereMonth('credit_parcels.date', $thisMonth)
             ->sum('credit_parcels.parcel_vl');
 
         $balance = $total_income - ($total_expenses + $parcels_payed);
