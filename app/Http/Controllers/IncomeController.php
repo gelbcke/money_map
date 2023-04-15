@@ -94,6 +94,14 @@ class IncomeController extends Controller
     public function edit(Income $income)
     {
         //
+        $banks = Bank::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })
+            ->where('wallet_id', '!=', 0)
+            ->get();
+
+        return view('incomes.edit', compact('income', 'banks'));
     }
 
     /**
@@ -106,6 +114,18 @@ class IncomeController extends Controller
     public function update(Request $request, Income $income)
     {
         //
+        $user = Auth::user()->id;
+
+        $request->validate([
+            'date' => 'required',
+            'value' => 'required',
+            'bank_id' => 'required'
+        ]);
+
+        $income->update($request->all() + ['user_id' => $user]);
+
+        return redirect()->route('incomes.index')
+            ->with('success', 'Despesa atualizada com sucesso!');
     }
 
     /**
