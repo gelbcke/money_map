@@ -162,7 +162,21 @@ class ExpenseController extends Controller
     public function edit(Expense $expense)
     {
         //
-        return view('expenses.edit', compact('expense'));
+        $banks = Bank::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })
+            ->where('wallet_id', '!=', 0)
+            ->get();
+
+        $budgets = Budget::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })
+            ->where('status', 1)
+            ->get();
+
+        return view('expenses.edit', compact('expense', 'banks', 'budgets'));
     }
 
     /**
@@ -185,6 +199,23 @@ class ExpenseController extends Controller
 
         return redirect()->route('expenses.index')
             ->with('success', 'Despesa atualizada!');
+    }
+
+    /**
+     * Cancel the recurency update in storage.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Income $income
+     * @return \Illuminate\Http\Response
+     */
+    public function cancel_rec($id)
+    {
+        //
+        Expense::where('id', $id)
+            ->update(['rec_expense' => NULL]);
+
+        return redirect()->route('expenses.index')
+            ->with('message', 'Recurrency canceled');
     }
 
     /**
