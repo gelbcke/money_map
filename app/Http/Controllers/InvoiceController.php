@@ -80,8 +80,8 @@ class InvoiceController extends Controller
         foreach ($banks as $bank) {
             $cc_info = CreditCard::where('bank_id', $bank->id);
 
-            $start_date = Carbon::now()->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
-            $end_date   = Carbon::now()->startOfMonth()->addMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
+            $start_date = Carbon::now()->startOfMonth()->subMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
+            $end_date   = Carbon::now()->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
 
             //dd($start_date . " - " . $end_date);
 
