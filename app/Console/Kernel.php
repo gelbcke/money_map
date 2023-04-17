@@ -14,6 +14,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         Commands\UpdateIncome::class,
+        Commands\CheckInvoicesToClose::class,
     ];
 
     /**
@@ -24,7 +25,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('update_income:cron')->everyMinute();
+        $schedule->command('update_income:cron')->daily();
+        $schedule->command('checkinvoicetoclose:cron')->daily();
     }
 
     /**

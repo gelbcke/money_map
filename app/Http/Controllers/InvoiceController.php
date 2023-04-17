@@ -28,14 +28,13 @@ class InvoiceController extends Controller
             ->where('f_cred', 1)
             ->get();
 
-
-
-
-
+        $invoices = Invoice::where('user_id', Auth::user()->id)
+            ->whereNull('payment_status')
+            ->get();
 
         $now = Carbon::now()->format('m-Y');
 
-        return view('invoices.index', compact('banks', 'now'));
+        return view('invoices.index', compact('banks', 'now', 'invoices'));
     }
 
     /**
@@ -111,6 +110,7 @@ class InvoiceController extends Controller
         //
     }
 
+
     /**
      * Update the specified resource in storage.
      *
@@ -132,5 +132,37 @@ class InvoiceController extends Controller
     public function destroy(Invoice $invoice)
     {
         //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param \App\Models\Invoice $invoice
+     * @return \Illuminate\Http\Response
+     */
+    public function to_pay()
+    {
+        //
+        $invoices = Invoice::where('user_id', Auth::user()->id)
+            ->whereNull('payment_status')
+            ->get();
+
+        return view('invoices.to_pay', compact('invoices'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param \App\Models\Invoice $invoice
+     * @return \Illuminate\Http\Response
+     */
+    public function submitpayment($id)
+    {
+        //
+        Invoice::where('id', $id)
+            ->update(['payment_status' => 1]);
+
+        return redirect()->route('invoices.to_pay')
+            ->with('message', 'Invoices Payed canceled');
     }
 }

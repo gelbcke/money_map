@@ -22,9 +22,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/', function () {
         return view('home');
     });
-
     Route::get('home', 'App\Http\Controllers\HomeController@index')->name('home');
     Route::get('/', 'App\Http\Controllers\HomeController@index');
+
+    Route::get('invoices/to_pay', '\App\Http\Controllers\InvoiceController@to_pay')->name('invoices.to_pay');
+    Route::get('invoices/to_pay/{id}', '\App\Http\Controllers\InvoiceController@submitpayment')->name('invoices.submitpayment');
+
     Route::resource('wallets', 'App\Http\Controllers\WalletController');
     Route::resource('banks', 'App\Http\Controllers\BankController');
     Route::resource('credit_parcels', 'App\Http\Controllers\CreditParcelsController');
@@ -36,6 +39,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('investments', '\App\Http\Controllers\InvestmentController');
     Route::resource('invoices', '\App\Http\Controllers\InvoiceController');
     Route::resource('user', 'App\Http\Controllers\UserController', ['except' => ['show']]);
+
     Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
     Route::put('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
     Route::put('profile/password', ['as' => 'profile.password', 'uses' => 'App\Http\Controllers\ProfileController@password']);

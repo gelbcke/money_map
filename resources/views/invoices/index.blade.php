@@ -24,8 +24,27 @@
 				<div class="card">
 					<div class="card-header">
 						<h5 class="card-title">{{ __('bank.credit_card') }}</h5>
+						<div class="card-tools">
+							<a href="{{ route('invoices.to_pay') }}" class="btn btn-sm btn-default">
+								<span title="{{ $invoices->count() }} Invoices to pay"
+									class="badge badge-primary">{{ $invoices->count() }}</span> {{ __('invoices.invoice_to_pay') }}
+							</a>
+						</div>
 					</div>
+
+
+
 					<div class="card-body">
+						@if ($errors->any())
+							<div class="alert alert-danger">
+								<strong>Whoops!</strong> There were some problems with your input.<br><br>
+								<ul>
+									@foreach ($errors->all() as $error)
+										<li>{{ $error }}</li>
+									@endforeach
+								</ul>
+							</div>
+						@endif
 						@if ($banks->count() > 0)
 							<table class="table">
 								<thead class="text-primary">
@@ -83,7 +102,6 @@
 												    ) }}
 											</td>
 											<td>
-
 												{{ __('general.M_s') .
 												    ' ' .
 												    number_format(

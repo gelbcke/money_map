@@ -19,4 +19,22 @@ class Invoice extends Model
     protected $casts = [
         'period' => 'date',
     ];
+
+    protected $fillable = [
+        'user_id',
+        'bank_id',
+        'value',
+        'due_date',
+        'payment_status'
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function bank()
+    {
+        return $this->belongsTo(Bank::class);
+    }
 }
