@@ -18,7 +18,7 @@ class WalletController extends Controller
         //
         $wallets = Wallet::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->get();
 
@@ -49,10 +49,9 @@ class WalletController extends Controller
         $request->validate([
             'name' => 'required'
         ]);
-        if(Auth::user()->group_id != NULL){
+        if (Auth::user()->group_id != NULL) {
             $group_id = Auth::user()->group_id;
-        }else
-        {
+        } else {
             $group_id = NULL;
         }
         Wallet::create($request->all() + ['user_id' => $user, 'status' => 1, 'group_id' => $group_id]);
@@ -72,7 +71,7 @@ class WalletController extends Controller
         //
         $wallets = Wallet::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->get();
 
@@ -100,6 +99,10 @@ class WalletController extends Controller
     public function update(Request $request, Wallet $wallet)
     {
         //
+        $wallet->update(['name' => $request->name]);
+
+        return redirect()->route('wallets.index')
+            ->with('message', 'Wallet updated!');
     }
 
     /**
