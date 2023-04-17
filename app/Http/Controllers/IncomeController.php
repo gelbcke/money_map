@@ -156,9 +156,9 @@ class IncomeController extends Controller
         //
     }
 
-    public function confirm_recepit($id)
+    public function confirm_recepit($org_id)
     {
-        Income::where('id', $id)
+        Income::where('id', $org_id)
             ->update(['confirmed' => 1]);
 
         return redirect()->route('incomes.index')

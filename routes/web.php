@@ -46,7 +46,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('profile/settings', ['as' => 'profile.settings', 'uses' => 'App\Http\Controllers\ProfileController@settings']);
     Route::get('{page}', ['as' => 'page.index', 'uses' => 'App\Http\Controllers\PageController@index']);
     Route::get('expenses/cancel_rec/{id}', 'App\Http\Controllers\ExpenseController@cancel_rec')->name('expenses.cancel_rec');
-    Route::get('incomes/cancel_rec/{id}', 'App\Http\Controllers\IncomeController@cancel_rec')->name('incomes.cancel_rec');
+    Route::get('incomes/cancel_rec/{org_id}', 'App\Http\Controllers\IncomeController@cancel_rec')->name('incomes.cancel_rec');
     Route::get('incomes/confirm_recepit/{id}', 'App\Http\Controllers\IncomeController@confirm_recepit')->name('incomes.confirm_recepit');
     Route::get('user_groups/get_in/{group_id}/{user_id}', 'App\Http\Controllers\UserGroupController@GetInGroup')->name('user_groups.get_in');
     Route::get('user_groups/get_out/{group_id}/{user_id}', 'App\Http\Controllers\UserGroupController@GetOutGroup')->name('user_groups.get_out');

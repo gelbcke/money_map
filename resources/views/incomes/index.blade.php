@@ -65,9 +65,8 @@
 											</td>
 											<td>
 												{{ $value->details }}
-												|
 												@if ($value->rec_income)
-													<a href="{{ route('incomes.cancel_rec', $value->id) }}">
+													| <a href="{{ route('incomes.cancel_rec', $value->org_id) }}">
 														<i class="fa fa-ban" style="color: red" title="{{ __('incomes.cancel_rec') }}"></i>
 													</a>
 												@endif
