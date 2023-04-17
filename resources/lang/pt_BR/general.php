@@ -33,6 +33,7 @@ return [
     'terms_and_conditions' => 'Termos e Condições',
     'menu' => [
         'actions' => 'Ações',
+        'search' => 'Buscar',
         'create' => 'Criar',
         'edit' => 'Editar',
         'delete' => 'Apagar',

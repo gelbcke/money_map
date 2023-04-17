@@ -29,7 +29,13 @@ class InvoiceController extends Controller
             ->get();
 
 
-        return view('invoices.index', compact('banks'));
+
+
+
+
+        $now = Carbon::now()->format('m-Y');
+
+        return view('invoices.index', compact('banks', 'now'));
     }
 
     /**
@@ -59,20 +65,13 @@ class InvoiceController extends Controller
      * @param \App\Models\Invoice $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($id, Request $request)
     {
         //
-        $now = Carbon::now();
-        $today = $now->format('Y-m-d');
-        $thisMonth = $now->format('m');
-        $prevMonth = $now->subMonth()->format('m');
-        $thisYear = $now->format('Y');
-
-        if ($thisMonth != 1) {
-            $prevYear = $now->format('Y');
-        } else {
-            $prevYear = $now->subYear()->format('Y');
-        }
+        $dateMonthArray = explode('-', $request->date);
+        $month = $dateMonthArray[0];
+        $year = $dateMonthArray[1];
+        $period = Carbon::createFromDate($year, $month)->startOfMonth();
 
         $user   = Auth::user();
         $banks  = Bank::where('id', $id)->get();
@@ -80,10 +79,8 @@ class InvoiceController extends Controller
         foreach ($banks as $bank) {
             $cc_info = CreditCard::where('bank_id', $bank->id);
 
-            $start_date = Carbon::now()->startOfMonth()->subMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
-            $end_date   = Carbon::now()->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
-
-            //dd($start_date . " - " . $end_date);
+            $start_date = Carbon::parse($period)->startOfMonth()->subMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
+            $end_date   = Carbon::parse($period)->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
 
             $cc_parcels = CreditParcels::where('bank_id', $bank->id)
                 ->whereBetween('date', [$start_date, $end_date])
@@ -100,7 +97,7 @@ class InvoiceController extends Controller
             $invoices = ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value'));
         }
 
-        return view('invoices.details', compact('invoices', 'cc_expenses', 'cc_parcels', 'user', 'cc_info', 'now'));
+        return view('invoices.details', compact('request', 'invoices', 'cc_expenses', 'cc_parcels', 'user', 'cc_info', 'period'));
     }
 
     /**
