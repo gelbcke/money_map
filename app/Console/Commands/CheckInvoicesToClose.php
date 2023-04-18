@@ -69,12 +69,17 @@ class CheckInvoicesToClose extends Command
 
             if (Carbon::parse()->setDay($cc_info->value('close_invoice'))->addDay()->format('d') == $period->format('d')) {
 
+                $c_due_date = now()->setDay($cc_info->value('due_date'));
+
+                if ($c_due_date < $period) {
+                    $c_due_date->addMonth();
+                }
+
                 Invoice::create([
                     'user_id' => $bank->user_id,
                     'bank_id' => $bank->id,
                     'value' => ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value')),
-                    'due_date' => '2023-05-10' //$cc_info->value('due_date')
-
+                    'due_date' => $c_due_date
                 ]);
             }
         }
