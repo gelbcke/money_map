@@ -142,7 +142,7 @@
 								</div>
 							</div>
 							<input type="checkbox" id="rec_expense" name="rec_expense" value="1"
-								@if ($expense->payment_method = 1) checked @endif>
+								@if ($expense->rec_expense == 1) checked @endif>
 							<label for="rec_expense">{{ __('expenses.recurring_expenses') }}</label>
 							<hr>
 							<button type="submit" class="btn btn-success">{{ __('general.menu.save') }}</button>
@@ -173,7 +173,7 @@
                 else{
                     document.getElementById('show_cred').style.display = 'none';
                     document.getElementById('show_parcels').style.display = 'none';
-                    $("input:checkbox").removeAttr("checked");
+                    $("id:showparcels").removeAttr("checked");
                 }
             });
 
@@ -194,13 +194,13 @@
             else{
                 document.getElementById('show_cred').style.display = 'none';
                 document.getElementById('show_parcels').style.display = 'none';
-                $("input:checkbox").removeAttr("checked");
+                $("id:showparcels").removeAttr("checked");
             }
         });
 
          $(document).click(function() {
 				if ($("#showparcels").is(':checked')) {
-                document.getElementById('show_parcels').style.display = '';
+                    document.getElementById('show_parcels').style.display = '';
                 } else {
                     document.getElementById('show_parcels').style.display = 'none';
                 }

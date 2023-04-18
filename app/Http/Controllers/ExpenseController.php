@@ -38,6 +38,7 @@ class ExpenseController extends Controller
                 ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->OrderBy('date', 'desc')
+            ->OrderBy('created_at', 'DESC')
             ->get();
 
         if ($request->has('rec_exp')) {
@@ -102,7 +103,7 @@ class ExpenseController extends Controller
             'bank_id' => 'required',
             'budget_id' => 'required',
             'details' => 'required',
-            'rec_expense' => 'max:1'
+            'rec_expense' => 'integer | max:1'
         ]);
 
         if ($request->has('parcels')) {
@@ -207,7 +208,7 @@ class ExpenseController extends Controller
 
         $expense->update($request->all());
 
-        if ($request->payment_method != 1) {
+        if ($request->payment_method != 1 || empty($request->showparcels)) {
             $expense->update([
                 'parcels' => NULL,
                 'parcel_vl' => NULL
@@ -215,7 +216,9 @@ class ExpenseController extends Controller
             CreditParcels::where('expense_id', $expense->id)->delete();
         }
 
-        if (($request->payment_method == 1) && (isset($request->parcels))) {
+        //dd($request->showparcels);
+
+        if (($request->payment_method == 1) && (isset($request->parcels) && (isset($request->showparcels)))) {
             $end_parcels = NULL;
             $user = Auth::user()->id;
 
