@@ -65,15 +65,15 @@
 									<div class="form-group">
 										<label for="bank_id">{{ __('general.bank') }} / {{ __('general.account') }}</label>
 										<div class="float-right">
-											<input type="radio" id="credit" name="payment_method" title={{ __('general.credit') }} value="1"
-												onclick="show(this.value)" @if ($expense->payment_method = 1) checked @endif required>
-											<label for="f_cred">{{ __('general.credit') }}</label> |
-											<input type="radio" id="debit" name="payment_method" title={{ __('general.debit') }} value="2"
-												onchange="hide(this.value)" @if ($expense->payment_method == 2) checked @endif>
-											<label for="f_deb">{{ __('general.debit') }}</label> |
+											<input type="radio" id="cred" name="payment_method" title={{ __('general.credit') }} value="1"
+												@if ($expense->payment_method == 1) checked @endif>
+											<label for="cred">{{ __('general.credit') }}</label> |
+											<input type="radio" id="deb" name="payment_method" title={{ __('general.debit') }} value="2"
+												@if ($expense->payment_method == 2) checked @endif>
+											<label for="deb">{{ __('general.debit') }}</label> |
 											<input type="radio" id="cash" name="payment_method" title={{ __('general.cash') }} value="3"
-												onchange="hide(this.value)" @if ($expense->payment_method == 3) checked @endif>
-											<label for="f_cash">{{ __('general.cash') }}</label>
+												@if ($expense->payment_method == 3) checked @endif>
+											<label for="cash">{{ __('general.cash') }}</label>
 										</div>
 										<select id="bank_id" name="bank_id" class="form-control">
 											<option value=""> --- {{ __('general.menu.select') }} ---</option>
@@ -101,7 +101,19 @@
 									</div>
 								</div>
 							</div>
+
 							<div class="row" id="show_cred" style="display:none">
+								<hr>
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" id="showparcels" name="showparcels"
+										@isset($expense->parcels)) checked @endisset>
+									<label class="form-check-label">{{ __('expenses.parceled_expenses') }}</label>
+								</div>
+								<hr>
+							</div>
+
+
+							<div class="row" id="show_parcels" style="display:none">
 								<div class="col-md-6 pr-1">
 									<div class="form-group">
 										<label for="parcels">{{ __('expenses.parcels') }}</label>
@@ -153,17 +165,48 @@
             document.getElementById("parcel_vl").value = parcel_vl.toFixed(2);
         }
 
-        if (document.getElementById('credit').checked) {
-            document.getElementById('show_cred').style.display = '';
+        function check_cred_inputs() {
+            $(document).ready(function() {
+				if ($("#cred").is(':checked')) {
+                    document.getElementById('show_cred').style.display = '';
+                }
+                else{
+                    document.getElementById('show_cred').style.display = 'none';
+                    document.getElementById('show_parcels').style.display = 'none';
+                    $("input:checkbox").removeAttr("checked");
+                }
+            });
+
+            $(document).ready(function() {
+				if ($("#showparcels").is(':checked')) {
+                    document.getElementById('show_parcels').style.display = '';
+                } else {
+                    document.getElementById('show_parcels').style.display = 'none';
+                }
+            });
+
         }
 
-        function show(str) {
-            document.getElementById('show_cred').style.display = '';
-        }
+        $(document).click(function() {
+			if ($("#cred").is(':checked')) {
+                document.getElementById('show_cred').style.display = '';
+            }
+            else{
+                document.getElementById('show_cred').style.display = 'none';
+                document.getElementById('show_parcels').style.display = 'none';
+                $("input:checkbox").removeAttr("checked");
+            }
+        });
 
-        function hide(str) {
-            document.getElementById('show_cred').style.display = 'none';
-        }
+         $(document).click(function() {
+				if ($("#showparcels").is(':checked')) {
+                document.getElementById('show_parcels').style.display = '';
+                } else {
+                    document.getElementById('show_parcels').style.display = 'none';
+                }
+            });
+
+    window.onload = check_cred_inputs;
 
     </script>
 @endsection

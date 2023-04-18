@@ -65,12 +65,11 @@
 									<div class="form-group">
 										<label for="bank_id">{{ __('general.bank') }} / {{ __('general.account') }}</label>
 										<div class="float-right">
-											<input type="radio" id="html" name="payment_method" value="1" onchange="show(this.value)"
-												required>
+											<input type="radio" id="cred" name="payment_method" value="1" required>
 											<label for="f_cred">{{ __('general.credit') }}</label> |
-											<input type="radio" id="css" name="payment_method" value="2">
+											<input type="radio" id="deb" name="payment_method" value="2">
 											<label for="f_deb">{{ __('general.debit') }}</label> |
-											<input type="radio" id="javascript" name="payment_method" value="3">
+											<input type="radio" id="cash" name="payment_method" value="3">
 											<label for="f_cash">{{ __('general.cash') }}</label>
 										</div>
 										<select id="bank_id" name="bank_id" class="form-control">
@@ -97,7 +96,17 @@
 									</div>
 								</div>
 							</div>
+
 							<div class="row" id="show_cred" style="display:none">
+								<hr>
+								<div class="form-check">
+									<input type="checkbox" class="form-check-input" id="showparcels" name="showparcels">
+									<label class="form-check-label">{{ __('expenses.parceled_expenses') }}</label>
+								</div>
+								<hr>
+							</div>
+
+							<div class="row" id="show_parcels" style="display:none">
 								<div class="col-md-6 pr-1">
 									<div class="form-group">
 										<label for="parcels">{{ __('expenses.parcels') }}</label>
@@ -148,10 +157,27 @@
             document.getElementById("parcel_vl").value = parcel_vl.toFixed(2);
         }
 
-        function show(str) {
-            document.getElementById('show_cred').style.display = 'none';
-            document.getElementById('show_cred').style.display = '';
-        }
+        $(document).ready(function() {
+            $('input[type="radio"]').click(function() {
+                if($(this).attr('id') == 'cred') {
+                    document.getElementById('show_cred').style.display = '';
+                }
+                else {
+                    document.getElementById('show_cred').style.display = 'none';
+                }
+            });
+        });
 
+        const checkbox = document.getElementById('showparcels');
+
+        const box = document.getElementById('box');
+
+        checkbox.addEventListener('click', function handleClick() {
+            if (checkbox.checked) {
+                document.getElementById('show_parcels').style.display = '';
+            } else {
+                document.getElementById('show_parcels').style.display = 'none';
+            }
+        });
     </script>
 @endsection

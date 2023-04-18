@@ -11,7 +11,8 @@ class Expense extends Model
 
     protected $casts = [
         'value' => 'float',
-        'parcels' => 'integer'
+        'parcels' => 'integer',
+        'payment_method' => 'integer'
     ];
 
     protected $dates = [
@@ -49,5 +50,4 @@ class Expense extends Model
     {
         return $this->belongsTo(Budget::class);
     }
-
 }

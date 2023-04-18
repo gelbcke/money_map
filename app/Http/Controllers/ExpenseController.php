@@ -189,13 +189,63 @@ class ExpenseController extends Controller
     public function update(Request $request, Expense $expense)
     {
         //
+        if (Auth::user()->group_id != NULL) {
+            $group_id = Auth::user()->group_id;
+        } else {
+            $group_id = NULL;
+        }
+
         $request->validate([
             'date' => 'required',
             'value' => 'required',
             'bank_id' => 'required',
-            'budget_id' => 'required'
+            'budget_id' => 'required',
+            'payment_method' => 'required | integer | max:3'
         ]);
+
+        // dd($request->all());
+
         $expense->update($request->all());
+
+        if ($request->payment_method != 1) {
+            $expense->update([
+                'parcels' => NULL,
+                'parcel_vl' => NULL
+            ]);
+            CreditParcels::where('expense_id', $expense->id)->delete();
+        }
+
+        if (($request->payment_method == 1) && (isset($request->parcels))) {
+            $end_parcels = NULL;
+            $user = Auth::user()->id;
+
+            $end_parcels = Carbon::parse($request->input('date'))->addMonths($request->input('parcels'));
+
+            $expense->update($request->all() + [
+                'user_id' => $user,
+                'end_parcels' => $end_parcels,
+                'group_id' => $group_id
+            ]);
+
+            $request->validate([
+                'bank_id' => 'required|integer',
+                'date' => 'required|date_format:Y-m-d',
+                'parcels' => 'required|integer',
+                'parcel_vl' => 'required|numeric',
+            ]);
+
+            for ($i = 1; $i <= $request->input('parcels'); $i++) {
+                $parcels[] = [
+                    'bank_id' => $request->input('bank_id'),
+                    'expense_id' => $expense->id,
+                    'date' => Carbon::parse($request->input('date'))->subMonth(1)->addMonths($i),
+                    'parcel_nb' => $i,
+                    'parcel_vl' => $request->input('parcel_vl'),
+                    //'group_id' => $group_id
+                ];
+            }
+            CreditParcels::insert($parcels);
+        }
 
         return redirect()->route('expenses.index')
             ->with('success', 'Despesa atualizada!');
