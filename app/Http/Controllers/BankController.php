@@ -23,7 +23,7 @@ class BankController extends Controller
         //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->get();
 
@@ -40,7 +40,7 @@ class BankController extends Controller
         //
         $wallets = Wallet::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('status', 1)
             ->get();
@@ -57,7 +57,7 @@ class BankController extends Controller
     public function store(Request $request)
     {
         //
-        $user = Auth::user()->id;
+        $user = Auth::user();
         $f_deb = NULL;
         $f_cred = NULL;
         $f_invest = NULL;
@@ -67,20 +67,19 @@ class BankController extends Controller
             'wallet_id' => 'required'
         ]);
 
-        if(Auth::user()->group_id != NULL){
-            $group_id = Auth::user()->group_id;
-        }else
-        {
+        if ($user->group_id) {
+            $group_id = $user->group_id;
+        } else {
             $group_id = NULL;
         }
 
         $bank = Bank::create($request->all() + [
-                'user_id' => $user,
-                'f_deb' => $f_deb,
-                'f_cred' => $f_cred,
-                'f_invest' => $f_invest,
-                'group_id' => $group_id
-            ]);
+            'user_id' => $user->id,
+            'f_deb' => $f_deb,
+            'f_cred' => $f_cred,
+            'f_invest' => $f_invest,
+            'group_id' => $group_id
+        ]);
 
         if ($request->input('f_cred')) {
             CreditCard::create([
