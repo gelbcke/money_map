@@ -22,20 +22,33 @@
 			</a>
 		</li>
 		<li class="nav-item dropdown">
-			<a class="nav-link" data-toggle="dropdown" href="#" aria-expanded="false">
-				@if (\Illuminate\Support\Facades\Auth::user()->language == 'pt_BR')
-					<i class="flag-icon flag-icon-br"></i>
-				@elseif(\Illuminate\Support\Facades\Auth::user()->language == 'en')
-					<i class="flag-icon flag-icon-us"></i>
+			<a class="nav-link" data-toggle="dropdown" href="#">
+				<i class="far fa-bell"></i>
+				@if ($G_notifications->count() > 0)
+					<span class="badge badge-warning navbar-badge">{{ $G_notifications->count() }}</span>
 				@endif
 			</a>
-			<div class="dropdown-menu dropdown-menu-right p-0">
-				<a href="#" class="dropdown-item @if (\Illuminate\Support\Facades\Auth::user()->language == 'pt_BR') active @endif">
-					<i class="flag-icon flag-icon-br mr-2"></i> Português
-				</a>
-				<a href="#" class="dropdown-item @if (\Illuminate\Support\Facades\Auth::user()->language == 'en') active @endif">
-					<i class="flag-icon flag-icon-us mr-2"></i> English
-				</a>
+			<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+				<span class="dropdown-item dropdown-header">
+					{{ $G_notifications->count() . ' ' . __('notifications.title') }}
+				</span>
+				<div class="dropdown-divider"></div>
+				@foreach ($G_notifications as $notification)
+					<div class="dropdown-divider"></div>
+					<a href="{{ route('notifications.index') }}" class="dropdown-item" title="{{ $notification->description }}">
+						<i class="fas fa-envelope mr-2"></i>
+						{!! substr($notification->description, 0, 25) !!}
+						<span class="text-muted float-right text-sm">
+							@if ($notification->created_at_difference())
+								{{ $notification->created_at_difference() . ' ' . __('general.info.day_ago') }}
+							@else
+								{{ __('general.info.today') }}
+							@endif
+						</span>
+					</a>
+				@endforeach
+				<div class="dropdown-divider"></div>
+				<a href="{{ route('notifications.index') }}" class="dropdown-item dropdown-footer">See All Notifications</a>
 			</div>
 		</li>
 		<li class="nav-item dropdown">

@@ -65,7 +65,9 @@ return [
     [
         'registred_by' => 'Registrado por',
         'registred_at' => 'Registrado as',
-        'belong_to' => 'Pertence á'
+        'belong_to' => 'Pertence á',
+        'day_ago' => 'dia atrás.',
+        'today' => 'Hoje'
     ],
     'select' =>
     [

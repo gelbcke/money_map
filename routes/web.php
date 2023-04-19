@@ -28,6 +28,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('invoices/to_pay', '\App\Http\Controllers\InvoiceController@to_pay')->name('invoices.to_pay');
     Route::get('invoices/to_pay/{id}', '\App\Http\Controllers\InvoiceController@submitpayment')->name('invoices.submitpayment');
 
+    Route::put('notifications/mark_readed/{id}', 'App\Http\Controllers\NotificationController@mark_readed')->name('notifications.mark_readed');
+
     Route::resource('wallets', 'App\Http\Controllers\WalletController');
     Route::resource('banks', 'App\Http\Controllers\BankController');
     Route::resource('credit_parcels', 'App\Http\Controllers\CreditParcelsController');
@@ -39,6 +41,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('investments', '\App\Http\Controllers\InvestmentController');
     Route::resource('invoices', '\App\Http\Controllers\InvoiceController');
     Route::resource('user', 'App\Http\Controllers\UserController', ['except' => ['show']]);
+    Route::resource('notifications', 'App\Http\Controllers\NotificationController');
 
     Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
     Route::put('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
