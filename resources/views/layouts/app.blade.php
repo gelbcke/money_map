@@ -25,6 +25,11 @@
 </head>
 
 <body class="{{ $body_class ?? Auth::user()->theme }}">
+	<!-- Preloader -->
+	<div class="preloader flex-column justify-content-center align-items-center">
+		<img class="animation__shake" src="{{ asset('assets') }}/dist/img/moneymap_logo.png" alt="MoneyMap Logo"
+			height="60" width="60">
+	</div>
 	@auth
 		@include('layouts.page_template.auth')
 	@endauth
