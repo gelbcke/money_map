@@ -35,6 +35,11 @@ class Bank extends Model
         return $this->belongsTo(UserGroup::class);
     }
 
+    public function invoice()
+    {
+        return $this->belongsTo(Invoice::class);
+    }
+
     public function credit_parcels()
     {
         return $this->hasMany(CreditParcels::class, 'bank_id');

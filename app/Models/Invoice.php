@@ -14,7 +14,7 @@ class Invoice extends Model
      *
      * @var array
      */
-    protected $dates = ['period', 'date'];
+    protected $dates = ['period', 'date', 'due_date'];
 
     protected $casts = [
         'period' => 'date',

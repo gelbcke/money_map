@@ -5,13 +5,15 @@ namespace App\Console\Commands;
 use Carbon\Carbon;
 use App\Models\Bank;
 use App\Models\Expense;
+use App\Models\Invoice;
+use App\Mail\NewInvoice;
 use App\Models\CreditCard;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use App\Models\CreditParcels;
-use App\Models\Invoice;
-use App\Models\Notification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 
 class CheckInvoicesToClose extends Command
 {
@@ -76,18 +78,22 @@ class CheckInvoicesToClose extends Command
                     $c_due_date->addMonth();
                 }
 
-                Invoice::create([
+                $inv_create = Invoice::create([
                     'user_id' => $bank->user_id,
                     'bank_id' => $bank->id,
                     'value' => ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value')),
                     'due_date' => $c_due_date
                 ]);
 
+                // Create Notification on DB
                 Notification::create([
                     'user_id' => $bank->user_id,
                     'model' => 'App\Notification',
                     'description' => __('invoices.notification.decription', ['bank_name' => $bank->name, 'cc_due_date' => $c_due_date->format('d/m/Y')])
                 ]);
+
+                //Send Mail to Group
+                Mail::to($bank->user->email)->queue(new NewInvoice($bank, $inv_create));
             }
         }
     }
