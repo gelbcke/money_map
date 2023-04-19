@@ -9,6 +9,7 @@ use App\Models\CreditCard;
 use Illuminate\Http\Request;
 use App\Models\CreditParcels;
 use App\Models\Invoice;
+use App\Models\Notification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 
@@ -80,6 +81,12 @@ class CheckInvoicesToClose extends Command
                     'bank_id' => $bank->id,
                     'value' => ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value')),
                     'due_date' => $c_due_date
+                ]);
+
+                Notification::create([
+                    'user_id' => $bank->user_id,
+                    'model' => 'App\Notification',
+                    'description' => __('invoices.notification.decription', ['bank_name' => $bank->name, 'cc_due_date' => $c_due_date->format('d/m/Y')])
                 ]);
             }
         }
