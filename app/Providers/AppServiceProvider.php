@@ -35,7 +35,13 @@ class AppServiceProvider extends ServiceProvider
     private function globalNotifications()
     {
         view()->composer(array('*.*'), function ($view) {
-            $view->with('G_notifications', Notification::where('user_id', Auth::user()->id)->whereNull('readed')->get());
+            $view->with(
+                'G_notifications',
+                Notification::where('user_id', Auth::user()->id)
+                    ->whereNull('readed')
+                    ->orderBy('created_at', 'desc')
+                    ->get()
+            );
         });
     }
 }
