@@ -34,7 +34,8 @@ class AppServiceProvider extends ServiceProvider
      */
     private function globalNotifications()
     {
-        view()->composer(array('*.*'), function ($view) {
+        view()->composer('layouts.navbars.navs.auth', function ($view) {
+
             $view->with(
                 'G_notifications',
                 Notification::where('user_id', Auth::user()->id)
