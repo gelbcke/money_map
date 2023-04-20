@@ -74,6 +74,7 @@ class ExpenseController extends Controller
                 ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('status', 1)
+            ->where('operation', 'OUT')
             ->get();
 
         return view('expenses.create', compact('banks', 'budgets'));
@@ -175,6 +176,7 @@ class ExpenseController extends Controller
                 ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('status', 1)
+            ->where('operation', 'OUT')
             ->get();
 
         return view('expenses.edit', compact('expense', 'banks', 'budgets'));
