@@ -11,8 +11,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class NewInvoice extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $bank;
     public $inv_create;
+
     /**
      * Create a new message instance.
      *
@@ -20,7 +22,6 @@ class NewInvoice extends Mailable
      */
     public function __construct($bank, $inv_create)
     {
-        //
         $this->bank = $bank;
         $this->inv_create = $inv_create;
     }
@@ -32,9 +33,7 @@ class NewInvoice extends Mailable
      */
     public function build()
     {
-        //$user_info = "Teste User";
-
-        return $this->from('no-reply@moneymap.com', 'MoneyMAP')
+        return $this->from(env('MAIL_FROM_ADDRESS'), 'MoneyMAP')
             ->cc(User::where('group_id', $this->bank->user->group_id)->pluck('email'))
             ->view('emails.invoices.newinvoice')
             ->subject(__('invoices.notification.new_invoice_subject'))
