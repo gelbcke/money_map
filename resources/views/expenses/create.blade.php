@@ -5,6 +5,12 @@
     'activeNav' => '',
 ])
 
+@section('styles')
+	<!-- Select2 -->
+	<link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2/css/select2.min.css">
+	<link rel="stylesheet" href="{{ asset('assets') }}/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css">
+@endsection
+
 @section('content')
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
@@ -46,41 +52,24 @@
 							<div class="row">
 							</div>
 							<div class="row">
-								<div class="col-md-3 pr-1">
+								<div class="col-md-2 pr-1">
 									<div class="form-group">
 										<label for="date">{{ __('general.date') }}</label>
 										<input type="date" name="date" class="form-control" value="{{ old('date') ?? date('Y-m-d') }}">
 										@include('alerts.feedback', ['field' => 'date'])
 									</div>
 								</div>
-								<div class="col-md-2 pr-1">
+								<div class="col-md-3 pr-1">
 									<div class="form-group">
 										<label for="value">{{ __('general.value') }}</label>
-										<input type="number" min="1" step="any" name="value" id="value" class="form-control"
-											value="{{ old('value') }}" oninput="calc();">
-										@include('alerts.feedback', ['field' => 'value'])
-									</div>
-								</div>
-								<div class="col-md-4 pr-1">
-									<div class="form-group">
-										<label for="bank_id">{{ __('general.bank') }} / {{ __('general.account') }}</label>
-										<div class="float-right">
-											<input type="radio" id="cred" name="payment_method" value="1" required>
-											<label for="f_cred">{{ __('general.credit') }}</label> |
-											<input type="radio" id="deb" name="payment_method" value="2">
-											<label for="f_deb">{{ __('general.debit') }}</label> |
-											<input type="radio" id="cash" name="payment_method" value="3">
-											<label for="f_cash">{{ __('general.cash') }}</label>
+										<div class="input-group">
+											<div class="input-group-prepend">
+												<span class="input-group-text">{{ __('general.M_s') }}</span>
+											</div>
+											<input type="number" min="0" step="0.01" lang="en" name="value" id="value"
+												class="form-control" value="{{ old('value') }}" oninput="calc();">
+											@include('alerts.feedback', ['field' => 'value'])
 										</div>
-										<select id="bank_id" name="bank_id" class="form-control">
-											<option value=""> --- {{ __('general.menu.select') }} ---</option>
-											@foreach ($banks as $value)
-												<option value="{{ $value->id }}"><b>{{ $value->name }}</b>
-													- {{ $value->payment_method }} ({{ $value->wallet->name }})
-												</option>
-											@endforeach
-										</select>
-										@include('alerts.feedback', ['field' => 'bank_id'])
 									</div>
 								</div>
 								<div class="col-md-3 pr-1">
@@ -95,8 +84,38 @@
 										@include('alerts.feedback', ['field' => 'budget_id'])
 									</div>
 								</div>
+								<div class="col-md-4 pr-1">
+									<div class="form-group">
+										<label for="bank_id">{{ __('general.bank') }} / {{ __('general.account') }}</label>
+										<select id="bank_id" name="bank_id" class="form-control">
+											<option value=""> --- {{ __('general.menu.select') }} ---</option>
+											@foreach ($banks as $value)
+												<option value="{{ $value->id }}">
+													<strong>{{ $value->name }}</strong>
+													- {{ __('general.wallet') . ' ' . $value->wallet->name }}
+												</option>
+											@endforeach
+										</select>
+										@include('alerts.feedback', ['field' => 'bank_id'])
+									</div>
+								</div>
+								<div class="col-md-12 pr-1">
+									<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
+										<label class="btn btn-secondary">
+											<input type="radio" name="payment_method" id="cred" value="1" autocomplete="off">
+											{{ __('general.credit') }}
+										</label>
+										<label class="btn btn-secondary">
+											<input type="radio" name="payment_method" id="deb" value="2" autocomplete="off">
+											{{ __('general.debit') }}
+										</label>
+										<label class="btn btn-secondary">
+											<input type="radio" name="payment_method" id="cash" value="3" autocomplete="off">
+											{{ __('general.cash') }}
+										</label>
+									</div>
+								</div>
 							</div>
-
 							<div class="row" id="show_cred" style="display:none">
 								<hr>
 								<div class="form-check">
@@ -124,8 +143,29 @@
 									</div>
 								</div>
 							</div>
+
 							<hr class="half-rule" />
+
 							<div class="row">
+								<div class="col-md-12 pr-1">
+									<div class="form-group">
+										<label for="category_id">{{ __('general.menu.category') }}</label>
+										<div class="input-group">
+											<select id="category_id" name="category_id" class="form-control select2categories">
+												<option value=""> --- {{ __('general.menu.select') }} ---</option>
+												@foreach ($categories as $value)
+													<option value="{{ $value->id }}">{{ $value->name }}</option>
+												@endforeach
+											</select>
+											<div class="input-group-append" onclick="window.open('{{ route('categories.create') }}','new_window');">
+												<div class="input-group-text">
+													<i class="fa fa-plus"></i>
+												</div>
+											</div>
+											@include('alerts.feedback', ['field' => 'category_id'])
+										</div>
+									</div>
+								</div>
 								<div class="col-md-12 pr-1">
 									<div class="form-group">
 										<label for="details">{{ __('general.details') }}</label>
@@ -135,7 +175,7 @@
 								</div>
 							</div>
 							<input type="checkbox" id="rec_expense" name="rec_expense" value="1">
-							<label for="rec_expense">{{ __('expenses.recurring_expenses') }}</label>
+							<label for="rec_expense">{{ __('expenses.recurring_expenses') . ' (' . __('expenses.by_month') . ')' }}</label>
 							<hr>
 							<button type="submit" class="btn btn-success">{{ __('general.menu.save') }}</button>
 						</form>
@@ -147,37 +187,8 @@
 @endsection
 
 @section('scripts')
-	<script type="application/javascript">
-        function calc() {
-            var value = document.getElementById("value").value;
-            var value = parseFloat(value, 10);
-            var parcels = document.getElementById("parcels").value;
-            var parcels = parseFloat(parcels, 10);
-            var parcel_vl = value.toFixed(2) / parcels;
-            document.getElementById("parcel_vl").value = parcel_vl.toFixed(2);
-        }
-
-        $(document).ready(function() {
-            $('input[type="radio"]').click(function() {
-                if($(this).attr('id') == 'cred') {
-                    document.getElementById('show_cred').style.display = '';
-                }
-                else {
-                    document.getElementById('show_cred').style.display = 'none';
-                }
-            });
-        });
-
-        const checkbox = document.getElementById('showparcels');
-
-        const box = document.getElementById('box');
-
-        checkbox.addEventListener('click', function handleClick() {
-            if (checkbox.checked) {
-                document.getElementById('show_parcels').style.display = '';
-            } else {
-                document.getElementById('show_parcels').style.display = 'none';
-            }
-        });
-    </script>
+	<!-- Select2 -->
+	<script src="{{ asset('assets') }}/plugins/select2/js/select2.full.min.js"></script>
+	<!-- Page specific script -->
+	<script type="application/javascript" src="{{ asset('assets') }}/dist/js/pages/expenses.js"></script>
 @endsection

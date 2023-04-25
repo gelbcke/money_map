@@ -42,6 +42,12 @@
 										{{ __('general.value') }}
 									</th>
 									<th>
+										{{ __('general.menu.budget') }}
+									</th>
+									<th>
+										{{ __('general.menu.category') }}
+									</th>
+									<th>
 										{{ __('general.details') }}
 									</th>
 									<th>
@@ -71,6 +77,18 @@
 														<b>- {{ $value->parcels }}
 															x {{ number_format($value->parcel_vl, 2) }}</b>
 													</small>
+												@endif
+											</td>
+											<td>
+												{{ __('budget.' . $value->budget->name) }}
+											</td>
+											<td>
+												@if ($value->category_id)
+													<a href="{{ route('categories.show', $value->category_id) }}">
+														{{ $value->category->name }}
+													</a>
+												@else
+													{{ __('category.empty') }}
 												@endif
 											</td>
 											<td>

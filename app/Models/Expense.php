@@ -25,6 +25,7 @@ class Expense extends Model
         'group_id',
         'user_id',
         'budget_id',
+        'category_id',
         'date',
         'value',
         'bank_id',
@@ -49,5 +50,10 @@ class Expense extends Model
     public function budget()
     {
         return $this->belongsTo(Budget::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
     }
 }

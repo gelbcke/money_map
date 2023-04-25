@@ -8,6 +8,7 @@ use App\Models\Expense;
 use App\Models\ExpenseGroup;
 use App\Models\Wallet;
 use App\Models\Bank;
+use App\Models\Category;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +78,12 @@ class ExpenseController extends Controller
             ->where('operation', 'OUT')
             ->get();
 
-        return view('expenses.create', compact('banks', 'budgets'));
+        $categories = Category::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })->get();
+
+        return view('expenses.create', compact('banks', 'budgets', 'categories'));
     }
 
     /**
@@ -179,7 +185,12 @@ class ExpenseController extends Controller
             ->where('operation', 'OUT')
             ->get();
 
-        return view('expenses.edit', compact('expense', 'banks', 'budgets'));
+        $categories = Category::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })->get();
+
+        return view('expenses.edit', compact('expense', 'banks', 'budgets', 'categories'));
     }
 
     /**
