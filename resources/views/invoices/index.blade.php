@@ -93,11 +93,11 @@
 												        $value->credit_parcels->whereBetween('date', [
 												                Carbon\Carbon::now()->startOfMonth()->subMonth(2)->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
 												                Carbon\Carbon::now()->startOfMonth()->subMonth(1)->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
-												            ])->sum('parcel_vl') +
+												            ])->where('bank_id', $value->id)->sum('parcel_vl') +
 												            $value->expenses->whereNull('parcels')->whereBetween('date', [
 												                    Carbon\Carbon::now()->startOfMonth()->subMonth(2)->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
 												                    Carbon\Carbon::now()->startOfMonth()->subMonth(1)->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
-												                ])->sum('value'),
+												                ])->where('bank_id', $value->id)->where('payment_method', 1)->sum('value'),
 												        2,
 												    ) }}
 											</td>
@@ -108,11 +108,11 @@
 												        $value->credit_parcels->whereBetween('date', [
 												                Carbon\Carbon::now()->startOfMonth()->subMonth()->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
 												                Carbon\Carbon::now()->startOfMonth()->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
-												            ])->sum('parcel_vl') +
+												            ])->where('bank_id', $value->id)->sum('parcel_vl') +
 												            $value->expenses->whereNull('parcels')->whereBetween('date', [
 												                    Carbon\Carbon::now()->startOfMonth()->subMonth()->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
 												                    Carbon\Carbon::now()->startOfMonth()->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
-												                ])->sum('value'),
+												                ])->where('bank_id', $value->id)->where('payment_method', 1)->sum('value'),
 												        2,
 												    ) }}
 											</td>
