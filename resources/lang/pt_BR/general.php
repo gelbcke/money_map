@@ -52,6 +52,7 @@ return [
         'dashboard' => 'Dashboard',
         'wallets' => 'Carteiras',
         'banks' => 'Bancos',
+        'category' => 'Categoria',
         'accounts' => 'Contas',
         'my_account' => 'Minha Conta',
         'expense_groups' => 'Grupos de Despesas',

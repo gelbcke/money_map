@@ -42,6 +42,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('invoices', '\App\Http\Controllers\InvoiceController');
     Route::resource('user', 'App\Http\Controllers\UserController', ['except' => ['show']]);
     Route::resource('notifications', 'App\Http\Controllers\NotificationController');
+    Route::resource('categories', '\App\Http\Controllers\CategoryController');
 
     Route::get('profile', ['as' => 'profile.edit', 'uses' => 'App\Http\Controllers\ProfileController@edit']);
     Route::put('profile', ['as' => 'profile.update', 'uses' => 'App\Http\Controllers\ProfileController@update']);
@@ -58,4 +59,5 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('budgets/default_budget', 'App\Http\Controllers\BudgetController@default_budget')->name('budgets.default_budget');
     Route::post('budgets/deactivate/{id}', 'App\Http\Controllers\BudgetController@disable')->name('budgets.disable');
     Route::post('budgets/reactivate/{id}', 'App\Http\Controllers\BudgetController@enable')->name('budgets.enable');
+    Route::post('categories/add', 'App\Http\Controllers\CategoryController@add')->name('categories.add');
 });
