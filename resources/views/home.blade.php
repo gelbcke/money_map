@@ -109,30 +109,34 @@
 											<td>{{ $value->budget }}</td>
 											<td>{{ __('budget.' . $value->name) }}</td>
 											<td>
-												<div class="progress progress-xs">
-													@foreach ($exp_by_budget_prev_month as $vl)
+
+												@foreach ($exp_by_budget_prev_month as $vl)
+													@if ($vl->budget_id == $value->id)
 														@if ($get_income_prev_month > 0)
-															@if ($vl->budget_id == $value->id)
-																<div style="display: none">
-																	{{ $percent = (float) $vl->total + ($sum_parcels_prev_month->where('budget_id', $value->id)->sum('parcel_vl') / (($get_income_prev_month * $value->budget) / 100)) * 100 }}
-																</div>
-																@if ($percent < 50)
-																	<div class="progress-bar bg-success"
-																		title="{{ __('general.M_s') . ' ' . number_format($vl->total + $sum_parcels_prev_month->where('budget_id', $value->id)->sum('parcel_vl'), 2) }}  ({{ number_format($percent, 0) }}%)"
-																		style="width:{{ number_format($percent, 0) }}%"></div>
-																@elseif($percent >= 50 && $percent < 85)
-																	<div class="progress-bar bg-warning"
-																		title="{{ __('general.M_s') . ' ' . number_format($vl->total + $sum_parcels_prev_month->where('budget_id', $value->id)->sum('parcel_vl'), 2) }}  ({{ number_format($percent, 0) }}%)"
-																		style="width:{{ number_format($percent, 0) }}%"></div>
-																@elseif($percent >= 85)
-																	<div class="progress-bar bg-danger"
-																		title="{{ __('general.M_s') . ' ' . number_format($vl->total + $sum_parcels_prev_month->where('budget_id', $value->id)->sum('parcel_vl'), 2) }}  ({{ number_format($percent, 0) }}%)"
-																		style="width:{{ number_format($percent, 0) }}%"></div>
+															<div style="display: none">
+																{{ $percent_prev = (($vl->total + $sum_parcels_prev_month->where('budget_id', $value->id)->sum('parcel_vl')) / (($get_income_prev_month * $value->budget) / 100)) * 100 }}
+															</div>
+															<span class="badge">
+																{{ __('general.M_s') . ' ' . number_format($vl->total + $sum_parcels_prev_month->where('budget_id', $value->id)->sum('parcel_vl'), 2) }}
+																({{ number_format($percent_prev, 0) }}%)
+															</span>
+															<div class="progress progress-xs">
+
+																@if ($percent_prev < 50)
+																	<div class="progress-bar bg-success" style="width:{{ number_format($percent_prev, 0) }}%">
+																	</div>
+																@elseif($percent_prev >= 50 && $percent_prev < 85)
+																	<div class="progress-bar bg-warning" style="width:{{ number_format($percent_prev, 0) }}%">
+																	</div>
+																@elseif($percent_prev >= 85)
+																	<div class="progress-bar bg-danger" style="width:{{ number_format($percent_prev, 0) }}%">
+																	</div>
 																@endif
-															@endif
+															</div>
 														@endif
-													@endforeach
-												</div>
+													@endif
+												@endforeach
+
 											</td>
 											<td>
 												<span class="badge">
@@ -146,28 +150,31 @@
 											<td>{{ $value->budget }}</td>
 											<td>{{ __('budget.' . $value->name) }}</td>
 											<td>
-												<div class="progress progress-xs">
-													@foreach ($save_by_budget_prev_month as $vl)
-														@if ($get_income_prev_month > 0)
-															<div style="display: none">
-																{{ $SAVE_prev_month = ($vl->total / (($get_income_prev_month * $value->budget) / 100)) * 100 }}
-															</div>
+												@foreach ($save_by_budget_prev_month as $vl)
+													@if ($get_income_prev_month > 0)
+														<div style="display: none">
+															{{ $SAVE_prev_month = ($vl->total / (($get_income_prev_month * $value->budget) / 100)) * 100 }}
+														</div>
+
+														<span class="badge">
+															{{ __('general.M_s') . ' ' . number_format($vl->total, 2) }} ({{ number_format($SAVE_prev_month, 0) }}%)
+														</span>
+
+														<div class="progress progress-xs">
 															@if ($SAVE_prev_month < 50)
-																<div class="progress-bar bg-danger"
-																	title="{{ __('general.M_s') . ' ' . number_format($vl->total, 2) }}  ({{ number_format($SAVE_prev_month, 0) }}%)"
-																	style="width:{{ number_format($SAVE_prev_month, 0) }}%"></div>
+																<div class="progress-bar bg-danger" style="width:{{ number_format($SAVE_prev_month, 0) }}%">
+																</div>
 															@elseif($SAVE_prev_month >= 50 && $SAVE_prev_month < 90)
-																<div class="progress-bar bg-warning"
-																	title="{{ __('general.M_s') . ' ' . number_format($vl->total, 2) }}  ({{ number_format($SAVE_prev_month, 0) }}%)"
-																	style="width:{{ number_format($SAVE_prev_month, 0) }}%"></div>
+																<div class="progress-bar bg-warning" style="width:{{ number_format($SAVE_prev_month, 0) }}%">
+																</div>
 															@elseif($SAVE_prev_month >= 90)
-																<div class="progress-bar bg-success"
-																	title="{{ __('general.M_s') . ' ' . number_format($vl->total, 2) }}  ({{ number_format($SAVE_prev_month, 0) }}%)"
-																	style="width:{{ number_format($SAVE_prev_month, 0) }}%"></div>
+																<div class="progress-bar bg-success" style="width:{{ number_format($SAVE_prev_month, 0) }}%">
+																</div>
 															@endif
-														@endif
-													@endforeach
-												</div>
+														</div>
+													@endif
+												@endforeach
+
 											</td>
 											<td>
 												<span class="badge">
@@ -203,30 +210,28 @@
 											<td>{{ $value->budget }}</td>
 											<td>{{ __('budget.' . $value->name) }}</td>
 											<td>
-												<div class="progress progress-xs">
-													@foreach ($exp_by_budget_this_month as $vl)
-														@if ($vl->budget_id == $value->id)
-															@if ($get_income_this_month > 0)
-																<div style="display: none">
-																	{{ $percent = (($vl->total + $sum_parcels_this_month->where('budget_id', $value->id)->sum('parcel_vl')) / (($get_income_this_month * $value->budget) / 100)) * 100 }}
-																</div>
+												@foreach ($exp_by_budget_this_month as $vl)
+													@if ($vl->budget_id == $value->id)
+														@if ($get_income_this_month > 0)
+															<div style="display: none">
+																{{ $percent = (($vl->total + $sum_parcels_this_month->where('budget_id', $value->id)->sum('parcel_vl')) / (($get_income_this_month * $value->budget) / 100)) * 100 }}
+															</div>
+															<span class="badge">
+																{{ __('general.M_s') . ' ' . number_format($vl->total + $sum_parcels_this_month->where('budget_id', $value->id)->sum('parcel_vl'), 2) }}
+																({{ number_format($percent, 0) }}%)
+															</span>
+															<div class="progress progress-xs">
 																@if ($percent < 50)
-																	<div class="progress-bar bg-success"
-																		title="{{ __('general.M_s') . ' ' . number_format($vl->total + $sum_parcels_this_month->where('budget_id', $value->id)->sum('parcel_vl'), 2) }}  ({{ number_format($percent, 0) }}%)"
-																		style="width:{{ number_format($percent, 0) }}%"></div>
+																	<div class="progress-bar bg-success" style="width:{{ number_format($percent, 0) }}%"></div>
 																@elseif($percent >= 50 && $percent < 85)
-																	<div class="progress-bar bg-warning"
-																		title="{{ __('general.M_s') . ' ' . number_format($vl->total + $sum_parcels_this_month->where('budget_id', $value->id)->sum('parcel_vl'), 2) }}  ({{ number_format($percent, 0) }}%)"
-																		style="width:{{ number_format($percent, 0) }}%"></div>
+																	<div class="progress-bar bg-warning" style="width:{{ number_format($percent, 0) }}%"></div>
 																@elseif($percent >= 85)
-																	<div class="progress-bar bg-danger"
-																		title="{{ __('general.M_s') . ' ' . number_format($vl->total + $sum_parcels_this_month->where('budget_id', $value->id)->sum('parcel_vl'), 2) }}  ({{ number_format($percent, 0) }}%)"
-																		style="width:{{ number_format($percent, 0) }}%"></div>
+																	<div class="progress-bar bg-danger" style="width:{{ number_format($percent, 0) }}%"></div>
 																@endif
-															@endif
+															</div>
 														@endif
-													@endforeach
-												</div>
+													@endif
+												@endforeach
 											</td>
 											<td>
 												<span class="badge">
@@ -240,28 +245,26 @@
 											<td>{{ $value->budget }}</td>
 											<td>{{ __('budget.' . $value->name) }}</td>
 											<td>
-												<div class="progress progress-xs">
-													@foreach ($save_by_budget_this_month as $vl)
-														@if ($get_income_this_month > 0)
-															<div style="display: none">
-																{{ $SAVE_this_month = ($vl->total / (($get_income_this_month * $value->budget) / 100)) * 100 }}
-															</div>
+												@foreach ($save_by_budget_this_month as $vl)
+													@if ($get_income_this_month > 0)
+														<div style="display: none">
+															{{ $SAVE_this_month = ($vl->total / (($get_income_this_month * $value->budget) / 100)) * 100 }}
+														</div>
+														<span class="badge">
+															{{ __('general.M_s') . ' ' . number_format($vl->total, 2) }} ({{ number_format($SAVE_this_month, 0) }}%)
+														</span>
+														<div class="progress progress-xs">
 															@if ($SAVE_this_month < 50)
-																<div class="progress-bar bg-danger"
-																	title="{{ __('general.M_s') . ' ' . number_format($vl->total, 2) }}  ({{ number_format($SAVE_this_month, 0) }}%)"
-																	style="width:{{ number_format($SAVE_this_month, 0) }}%"></div>
+																<div class="progress-bar bg-danger" style="width:{{ number_format($SAVE_this_month, 0) }}%"></div>
 															@elseif($SAVE_this_month >= 50 && $SAVE_this_month < 90)
-																<div class="progress-bar bg-warning"
-																	title="{{ __('general.M_s') . ' ' . number_format($vl->total, 2) }}  ({{ number_format($SAVE_this_month, 0) }}%)"
-																	style="width:{{ number_format($SAVE_this_month, 0) }}%"></div>
+																<div class="progress-bar bg-warning" style="width:{{ number_format($SAVE_this_month, 0) }}%"></div>
 															@elseif($SAVE_this_month >= 90)
-																<div class="progress-bar bg-success"
-																	title="{{ __('general.M_s') . ' ' . number_format($vl->total, 2) }}  ({{ number_format($SAVE_this_month, 0) }}%)"
-																	style="width:{{ number_format($SAVE_this_month, 0) }}%"></div>
+																<div class="progress-bar bg-success" style="width:{{ number_format($SAVE_this_month, 0) }}%"></div>
 															@endif
-														@endif
-													@endforeach
-												</div>
+														</div>
+													@endif
+												@endforeach
+
 											</td>
 											<td>
 												<span class="badge">
@@ -504,11 +507,11 @@
 			var salesChart = new Chart($salesChart, {
 				type: 'bar',
 				data: {
-					labels: {{ $parceled_expenses->pluck('month') }},
+					labels: {!! $parceled_expenses->pluck('month') !!},
 					datasets: [{
 						backgroundColor: '#007bff',
 						borderColor: '#007bff',
-						data: {{ $parceled_expenses->pluck('total') }}
+						data: {!! $parceled_expenses->pluck('total') !!}
 					}]
 				},
 				options: {

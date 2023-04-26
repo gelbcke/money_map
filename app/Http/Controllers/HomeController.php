@@ -40,10 +40,10 @@ class HomeController extends Controller
         $prevMonth = $now->subMonth()->format('m');
         $thisYear = $now->format('Y');
 
-        if ($thisMonth != 1) {
-            $prevYear = $now->format('Y');
-        } else {
+        if ($thisMonth == 1) {
             $prevYear = $now->subYear()->format('Y');
+        } else {
+            $prevYear = $now->format('Y');
         }
 
         $last_expenses = Expense::where(function ($query) {
@@ -113,10 +113,10 @@ class HomeController extends Controller
         })
             ->whereYear('date', $thisYear)
             ->whereMonth('date', $thisMonth)
-            ->whereNull('parcels')
             ->select(
                 'budget_id',
-                DB::raw('sum(value) as total')
+                DB::raw("SUM( ( CASE WHEN parcels is null THEN value END ) ) AS total")
+
             )
             ->groupBy('budget_id')
             ->get();
@@ -127,10 +127,9 @@ class HomeController extends Controller
         })
             ->whereYear('date', $prevYear)
             ->whereMonth('date', $prevMonth)
-            ->whereNull('parcels')
             ->select(
                 'budget_id',
-                DB::raw('sum(value) as total')
+                DB::raw("SUM( ( CASE WHEN parcels is null THEN value END ) ) AS total")
             )
             ->groupBy('budget_id')
             ->get();
@@ -247,7 +246,7 @@ class HomeController extends Controller
                     ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
             ->whereYear('credit_parcels.date', $thisYear)
-            ->whereMonth('credit_parcels.date', $thisMonth)
+            ->whereMonth('credit_parcels.date', $prevMonth)
             ->groupBy('credit_parcels.expense_id')
             ->get();
 
