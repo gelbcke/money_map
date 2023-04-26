@@ -226,6 +226,8 @@ class ExpenseController extends Controller
                 'parcels' => NULL,
                 'parcel_vl' => NULL
             ]);
+
+            //clear old parcels
             CreditParcels::where('expense_id', $expense->id)->delete();
         }
 
@@ -234,6 +236,9 @@ class ExpenseController extends Controller
         if (($request->payment_method == 1) && (isset($request->parcels) && (isset($request->showparcels)))) {
             $end_parcels = NULL;
             $user = Auth::user()->id;
+
+            //clear old parcels
+            CreditParcels::where('expense_id', $expense->id)->delete();
 
             $end_parcels = Carbon::parse($request->input('date'))->addMonths($request->input('parcels'));
 
