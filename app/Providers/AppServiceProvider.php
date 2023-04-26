@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Notification;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,6 +28,7 @@ class AppServiceProvider extends ServiceProvider
     {
         //
         $this->globalNotifications();
+        Paginator::useBootstrap();
     }
 
     /**

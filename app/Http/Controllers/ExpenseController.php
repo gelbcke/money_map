@@ -40,7 +40,7 @@ class ExpenseController extends Controller
         })
             ->OrderBy('date', 'desc')
             ->OrderBy('created_at', 'DESC')
-            ->get();
+            ->paginate(15);
 
         if ($request->has('rec_exp')) {
             $expenses = Expense::where(function ($query) {
@@ -49,7 +49,7 @@ class ExpenseController extends Controller
             })
                 ->where('rec_expense', 1)
                 ->OrderBy('date', 'desc')
-                ->get();
+                ->paginate(15);
         }
 
         return view('expenses.index', compact('expenses'));
