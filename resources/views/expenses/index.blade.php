@@ -23,15 +23,20 @@
 			<div class="col-md-12">
 				<div class="card">
 					<div class="card-header">
-						<h5 class="card-title">{{ __('expenses.expenses') }}</h5>
 						<div class="card-tools">
-							<a href="{{ route('expenses.index', 'rec_exp') }}" class="btn btn-sm btn-default">
-								{{ __('expenses.recurring_expenses') }}
-							</a>
-							<a href="{{ route('expenses.create') }}" class="btn btn-sm btn-info">{{ __('expenses.create_new') }}</a>
+							@if (Request::has('rec_exp'))
+								<a href="{{ route('expenses.index') }}" class="btn btn-sm btn-block btn-default">
+									{{ __('expenses.all_expenses') }}
+								</a>
+							@else
+								<a href="{{ route('expenses.index', 'rec_exp') }}" class="btn btn-sm btn-block btn-default">
+									{{ __('expenses.recurring_expenses') }}
+								</a>
+							@endif
+							<a href="{{ route('expenses.create') }}" class="btn btn-sm btn-block btn-info">{{ __('expenses.create_new') }}</a>
 						</div>
 					</div>
-					<div class="card-body">
+					<div class="card-body p-0">
 						<div class="table-responsive">
 							<table class="table">
 								<thead class="text-primary">
@@ -124,7 +129,9 @@
 								</tbody>
 							</table>
 						</div>
-						{{ $expenses, $expenses->links() }}
+						<div style="margin-left: 15px">
+							{{ $expenses, $expenses->links() }}
+						</div>
 					</div>
 				</div>
 			</div>

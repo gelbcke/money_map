@@ -9,6 +9,7 @@ return [
     'future_releases' => 'Lançamentos Futuros',
     'by_month' => 'Por mês',
     'recurring_expenses' => 'Despesas Recorrentes',
+    'all_expenses' => 'Todas as Despesas',
     'parcels' => 'Parcelas',
     'parcels_vl' => 'Valor das Parcelas',
     'payment_mode' => 'Modo de Pagamento',
