@@ -21,27 +21,26 @@ class InvestmentController extends Controller
         //
         $investments = Investment::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->groupBy('org_id')
             ->get();
 
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->whereNotNull('f_invest')
             ->get();
 
         $budgets = Budget::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
-                ->orWhereIn('group_id', explode(" ",Auth::user()->group_id));
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->where('operation', 'SAVE')
             ->get();
 
         return view('investments.index', compact('investments', 'banks', 'budgets'));
-
     }
 
     /**
@@ -71,15 +70,13 @@ class InvestmentController extends Controller
             'bank_id' => 'required'
         ]);
 
-        if(Auth::user()->group_id != NULL){
+        if (Auth::user()->group_id != NULL) {
             $group_id = Auth::user()->group_id;
-        }else
-        {
+        } else {
             $group_id = NULL;
         }
 
         $investment = Investment::create($request->all() + ['user_id' => $user, 'operation' => 'IN', 'group_id' => $group_id]);
-        $investment->org_id = $investment->id;
         $investment->save();
 
         return redirect()->route('investments.index')
@@ -117,7 +114,6 @@ class InvestmentController extends Controller
             return redirect()->route('investments.index')
                 ->with('error', 'Você não possuí permissão para inserir esses dados!');
         }
-
     }
 
     /**

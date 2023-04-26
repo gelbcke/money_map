@@ -20,6 +20,4 @@ class CreditCard extends Model
     {
         return $this->belongsTo(Bank::class);
     }
-
-
 }
