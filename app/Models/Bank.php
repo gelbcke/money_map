@@ -59,4 +59,9 @@ class Bank extends Model
     {
         return $this->hasMany(Invoice::class, 'bank_id');
     }
+
+    public function investments()
+    {
+        return $this->hasMany(Investment::class, 'bank_id');
+    }
 }

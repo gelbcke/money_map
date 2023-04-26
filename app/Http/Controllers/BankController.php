@@ -122,7 +122,57 @@ class BankController extends Controller
 
         $cc_parcels = CreditParcels::where('bank_id', $bank->id)
             ->whereBetween('date', [$start_date, $end_date])
-            //->unique('expense_id');
+            ->get();
+
+        $cc_expenses = Expense::where([
+            ['bank_id', $bank->id],
+            ['payment_method', 1],
+            ['parcels', NULL]
+        ])
+            ->whereBetween('date', [$start_date, $end_date])
+            ->get();
+
+        $debit_expenses = Expense::where([
+            ['bank_id', $bank->id],
+            ['payment_method', 2],
+            ['parcels', NULL]
+        ])
+            ->whereBetween('date', [$start_date, $end_date])
+            ->get();
+
+        $invoice_this_month = ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value'));
+
+        return view('banks.details', compact('bank', 'cc_info', 'creditCard', 'cc_parcels', 'cc_expenses', 'debit_expenses', 'invoice_this_month'));
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param \App\Models\Bank $bank
+     * @return \Illuminate\Http\Response
+     */
+    public function show_credit_card(Bank $bank, CreditCard $creditCard)
+    {
+        //
+        $now = Carbon::now();
+        $today = $now->format('Y-m-d');
+        $thisMonth = $now->format('m');
+        $prevMonth = $now->subMonth()->format('m');
+        $thisYear = $now->format('Y');
+
+        if ($thisMonth != 1) {
+            $prevYear = $now->format('Y');
+        } else {
+            $prevYear = $now->subYear()->format('Y');
+        }
+
+        $cc_info = CreditCard::where('bank_id', $bank->id);
+
+        $start_date = $now->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
+        $end_date = $now->startOfMonth()->addMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
+
+        $cc_parcels = CreditParcels::where('bank_id', $bank->id)
+            ->whereBetween('date', [$start_date, $end_date])
             ->get();
 
         $cc_expenses = Expense::where([
@@ -135,7 +185,6 @@ class BankController extends Controller
 
         $invoice_this_month = ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value'));
 
-
         return view('banks.creditcard_details', compact('bank', 'cc_info', 'creditCard', 'cc_parcels', 'cc_expenses', 'invoice_this_month'));
     }
 
@@ -147,7 +196,7 @@ class BankController extends Controller
      */
     public function edit(Bank $bank)
     {
-        //
+        return view('banks.edit', compact('bank'));
     }
 
     /**
@@ -159,7 +208,32 @@ class BankController extends Controller
      */
     public function update(Request $request, Bank $bank)
     {
-        //
+        $f_deb = NULL;
+        $f_cred = NULL;
+        $f_invest = NULL;
+
+        $bank->update($request->all() + [
+            'f_deb' => $f_deb,
+            'f_cred' => $f_cred,
+            'f_invest' => $f_invest
+        ]);
+
+        if ($request->input('f_cred')) {
+            CreditCard::where('bank_id', $bank->id)->update([
+                'due_date' => $request->input('due_date'),
+                'close_invoice' => $request->input('close_invoice'),
+                'credit_limit' => $request->input('credit_limit'),
+            ]);
+        } else {
+            CreditCard::where('bank_id', $bank->id)->update([
+                'due_date' => NULL,
+                'close_invoice' => NULL,
+                'credit_limit' => NULL,
+            ]);
+        }
+
+        return redirect()->route('banks.index')
+            ->with('success', 'Banco/Conta atualizada com sucesso!');
     }
 
     /**

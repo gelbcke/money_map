@@ -12,9 +12,11 @@ return [
     'credit_card_details' => 'Detalhes do Cartão de Crédito',
     'credit_card_parcels' => 'Despesas no Crédito Parcelado',
     'credit_card_expenses' => 'Despesas no Crédito á vista',
+    'debit_expenses' => 'Despesas no Débito',
     'invoice_this_month' => 'Fatura deste Mês',
     'invoice_prev_month' => 'Fatura anterior Mês',
     'credit_card_info' => 'Informações sobre o Cartão de Crédito',
+    'investments_info' => 'Dados de Ivestimentos',
     'balance' => 'Saldo',
     'credit_parcels' => [
         'title' => 'Compras Parceladas',

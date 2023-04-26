@@ -39,33 +39,16 @@
 									</ul>
 								</div>
 							@endif
-							<form method="post" action="{{ route('banks.store') }}" autocomplete="off">
+							<form method="post" action="{{ route('banks.update', $bank->id) }}" autocomplete="off">
 								@csrf
-								@method('post')
+								@method('put')
 								@include('alerts.success')
 								<div class="row">
 									<div class="col-md-6 pr-1">
 										<div class="form-group">
 											<label for="name">{{ __('general.name') }}</label>
-											<input type="text" name="name" class="form-control" value="{{ old('name') }}" autocomplete="none">
+											<input type="text" name="name" class="form-control" value="{{ $bank->name }}" autocomplete="none">
 											@include('alerts.feedback', ['field' => 'name'])
-										</div>
-									</div>
-									<div class="col-md-6 pr-1">
-										<div class="form-group">
-											<label for="wallet_id">{{ __('general.wallet') }}</label>
-											<select id="wallet_id" name="wallet_id" class="form-control">
-												<option class="disabled">--- {{ __('general.menu.select') }}---</option>
-												@foreach ($wallets as $value)
-													<option value="{{ $value->id }}">
-														{{ $value->name }}
-														-
-														{{ __('general.owner') }}
-														:
-														{{ $value->user->name }} </option>
-												@endforeach
-											</select>
-											@include('alerts.feedback', ['field' => 'wallet_id'])
 										</div>
 									</div>
 								</div>
@@ -75,13 +58,16 @@
 											<label for="payment_method">{{ __('expenses.payment_mode') }}
 												/ {{ __('bank.functions') }}</label>
 											<div>
-												<input type="checkbox" id="f_deb" name="f_deb" value="1">
+												<input type="checkbox" id="f_deb" name="f_deb" value="1"
+													@if ($bank->f_deb) checked @endif>
 												<label for="f_deb">{{ __('general.debit') }}</label>
 												<br>
-												<input type="checkbox" id="f_cred" name="f_cred" value="1">
+												<input type="checkbox" id="f_cred" name="f_cred" value="1"
+													@if ($bank->f_cred) checked @endif>
 												<label for="f_cred">{{ __('general.credit') }}</label>
 												<br>
-												<input type="checkbox" id="f_invest" name="f_invest" value="1">
+												<input type="checkbox" id="f_invest" name="f_invest" value="1"
+													@if ($bank->f_invest) checked @endif>
 												<label for="f_invest">{{ __('general.investment') }}</label>
 											</div>
 											@include('alerts.feedback', ['field' => 'payment_method'])
@@ -98,22 +84,25 @@
 												<div class="col-md-4 pr-1">
 													<div class="form-group">
 														<label for="due_date">{{ __('bank.due_date') }}</label>
-														<input type="number" name="due_date" class="form-control" value="{{ old('due_date') }}">
+														<input type="number" name="due_date" class="form-control"
+															value="{{ $bank->credit_card->value('due_date') }}">
 														@include('alerts.feedback', ['field' => 'due_date'])
 													</div>
 												</div>
 												<div class="col-md-4 pr-1">
 													<div class="form-group">
 														<label for="close_invoice">{{ __('bank.close_invoice') }}</label>
-														<input type="number" name="close_invoice" class="form-control" value="{{ old('close_invoice') }}">
+														<input type="number" name="close_invoice" class="form-control"
+															value="{{ $bank->credit_card->value('close_invoice') }}">
 														@include('alerts.feedback', ['field' => 'close_invoice'])
 													</div>
 												</div>
+
 												<div class="col-md-4 pr-1">
 													<div class="form-group">
 														<label for="credit_limit">{{ __('bank.credit_limit') }}</label>
 														<input type="number" min="1" step="any" name="credit_limit" class="form-control"
-															value="{{ old('credit_limit') }}">
+															value="{{ $bank->credit_card->value('credit_limit') }}">
 														@include('alerts.feedback', ['field' => 'credit_limit'])
 													</div>
 												</div>

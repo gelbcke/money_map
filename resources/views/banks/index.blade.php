@@ -57,12 +57,16 @@
 										<th>
 											{{ __('general.group') }}
 										</th>
+										<th>
+										</th>
 									</thead>
 									<tbody>
 										@foreach ($banks as $value)
 											<tr>
 												<td>
-													{{ $value->name }}
+													<a href="{{ route('banks.show', $value->id) }}">
+														{{ $value->name }}
+													</a>
 												</td>
 												<td>
 													{{ __('general.M_s') .
@@ -82,7 +86,7 @@
 														<b title="{{ __('general.debit') }}">D</b>
 													@endif
 													@if ($value->f_cred != null)
-														<a href="{{ route('banks.show', $value->id) }}">
+														<a href="{{ route('banks.show_credit_card', $value->id) }}">
 															<b title="{{ __('general.credit') }}">C</b>
 														</a>
 													@endif
@@ -106,6 +110,11 @@
 													@else
 														{{ $value->group->name }}
 													@endif
+												</td>
+												<td>
+													<a href="{{ route('banks.edit', $value->id) }}">
+														<i class="fa fa-edit"></i>
+													</a>
 												</td>
 											</tr>
 										@endforeach

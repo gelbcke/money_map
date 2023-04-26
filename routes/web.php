@@ -28,6 +28,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('invoices/to_pay', '\App\Http\Controllers\InvoiceController@to_pay')->name('invoices.to_pay');
     Route::get('invoices/to_pay/{id}', '\App\Http\Controllers\InvoiceController@submitpayment')->name('invoices.submitpayment');
 
+    Route::get('banks/credit_card/{bank}', 'App\Http\Controllers\BankController@show_credit_card')->name('banks.show_credit_card');
+
     Route::put('notifications/mark_readed/{id}', 'App\Http\Controllers\NotificationController@mark_readed')->name('notifications.mark_readed');
 
     Route::resource('wallets', 'App\Http\Controllers\WalletController');
