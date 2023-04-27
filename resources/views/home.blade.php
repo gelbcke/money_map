@@ -280,7 +280,7 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-lg-12">
+				<div class="col-lg-9">
 					<div class="card">
 						<div class="card-header border-0">
 							<div class="d-flex justify-content-between">
@@ -309,69 +309,40 @@
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="row">
+
 				<div class="col-md-3">
-					<div class="card card-tasks">
+					<div class="card">
 						<div class="card-header">
 							<h5 class="card-category">{{ __('home.expenses') }}</h5>
-							<h4 class="card-title">{{ __('home.by_month') }}</h4>
+							<h4 class="card-title">
+								{{ __('home.by_category') }}
+								<small> ( {{ __('home.this_month') }} ) </small>
+							</h4>
 						</div>
-						<div class="card-body p-0">
-							@if ($sum_expenses_month->count() > 0)
-								<div class="table-full-width table-responsive">
-									<table class="table">
-										<tbody>
-											@foreach ($sum_expenses_month as $vl)
-												<tr>
-													<td>
-														{{ __($vl->months) }}
-													</td>
-													<td>
-														{{ __('general.M_s') . ' ' . number_format($vl->value + $sum_parcels_this_month->sum('parcel_vl'), 2) }}
-													</td>
-												</tr>
-											@endforeach
-										</tbody>
-									</table>
+						<!-- /.card-header -->
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-12">
+									<div class="chart-responsive">
+										<canvas id="expense_by_category" height="205"></canvas>
+									</div>
+									<!-- ./chart-responsive -->
 								</div>
-							@else
-								<h6 class="card-footer">{{ __('messages.no_records_found') }}</h6>
-							@endif
+							</div>
+							<hr>
+							<small>
+								{{ __('category.empty') . ' ' . __('general.M_s') }}
+								{{ number_format($exp_without_cat_this_month->value('total'), 2) }}
+							</small>
+							<!-- /.row -->
 						</div>
+						<!-- /.card-body -->
 					</div>
 				</div>
-				<div class="col-md-3">
-					<div class="card card-tasks">
-						<div class="card-header">
-							<h5 class="card-category">{{ __('home.investments') }}</h5>
-							<h4 class="card-title">{{ __('home.by_month') }}</h4>
-						</div>
-						<div class="card-body p-0">
-							@if ($sum_investments_month->count() > 0)
-								<div class="table-full-width table-responsive">
-									<table class="table">
-										<tbody>
-											@foreach ($sum_investments_month as $vl)
-												<tr>
-													<td>
-														{{ __($vl->months) }}
-													</td>
-													<td>
-														{{ __('general.M_s') . ' ' . number_format($vl->value, 2) }}
-													</td>
-												</tr>
-											@endforeach
-										</tbody>
-									</table>
-								</div>
-							@else
-								<h6 class="card-footer">{{ __('messages.no_records_found') }}</h6>
-							@endif
-						</div>
-					</div>
-				</div>
-				<div class="col-md-6">
+			</div>
+
+			<div class="row">
+				<div class="col-md-12">
 					<div class="card">
 						<div class="card-header">
 							<h5 class="card-category">{{ __('home.last_expenses') }}</h5>
@@ -481,6 +452,69 @@
 					</div>
 				</div>
 			</div>
+			<div class="row">
+				<div class="col-md-3">
+					<div class="card card-tasks">
+						<div class="card-header">
+							<h5 class="card-category">{{ __('home.expenses') }}</h5>
+							<h4 class="card-title">{{ __('home.by_month') }}</h4>
+						</div>
+						<div class="card-body p-0">
+							@if ($sum_expenses_month->count() > 0)
+								<div class="table-full-width table-responsive">
+									<table class="table">
+										<tbody>
+											@foreach ($sum_expenses_month as $vl)
+												<tr>
+													<td>
+														{{ __($vl->months) }}
+													</td>
+													<td>
+														{{ __('general.M_s') . ' ' . number_format($vl->value + $sum_parcels_this_month->sum('parcel_vl'), 2) }}
+													</td>
+												</tr>
+											@endforeach
+										</tbody>
+									</table>
+								</div>
+							@else
+								<h6 class="card-footer">{{ __('messages.no_records_found') }}</h6>
+							@endif
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3">
+					<div class="card card-tasks">
+						<div class="card-header">
+							<h5 class="card-category">{{ __('home.investments') }}</h5>
+							<h4 class="card-title">{{ __('home.by_month') }}</h4>
+						</div>
+						<div class="card-body p-0">
+							@if ($sum_investments_month->count() > 0)
+								<div class="table-full-width table-responsive">
+									<table class="table">
+										<tbody>
+											@foreach ($sum_investments_month as $vl)
+												<tr>
+													<td>
+														{{ __($vl->months) }}
+													</td>
+													<td>
+														{{ __('general.M_s') . ' ' . number_format($vl->value, 2) }}
+													</td>
+												</tr>
+											@endforeach
+										</tbody>
+									</table>
+								</div>
+							@else
+								<h6 class="card-footer">{{ __('messages.no_records_found') }}</h6>
+							@endif
+						</div>
+					</div>
+				</div>
+
+			</div>
 		</div>
 	</section>
 @endsection
@@ -559,6 +593,32 @@
 						}]
 					}
 				}
+			})
+
+			//-------------
+			//- DONUT CHART -
+			//-------------
+			// Get context with jQuery - using jQuery's .get() method.
+			var donutChartCanvas = $('#expense_by_category').get(0).getContext('2d')
+			var donutData = {
+				labels: {!! $exp_by_cat_this_month->pluck('category.name') !!},
+				datasets: [{
+					data: {!! $exp_by_cat_this_month->pluck('total') !!},
+					backgroundColor: ['#f56954', '#00a65a', '#f39c12', '#00c0ef', '#3c8dbc', '#d2d6de'],
+				}]
+			}
+			var donutOptions = {
+				maintainAspectRatio: false,
+				responsive: true,
+				legend: {
+					display: false,
+				},
+			}
+
+			new Chart(donutChartCanvas, {
+				type: 'doughnut',
+				data: donutData,
+				options: donutOptions
 			})
 		})
 	</script>

@@ -108,7 +108,6 @@ class HomeController extends Controller
         /*
          * EXPENSES BY MONTH
          */
-
         $exp_by_budget_this_month = Expense::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
                 ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
@@ -134,6 +133,35 @@ class HomeController extends Controller
                 DB::raw("SUM( ( CASE WHEN parcels is null THEN value END ) ) AS total")
             )
             ->groupBy('budget_id')
+            ->get();
+
+        /**
+         * EXPENSES BY CATEGORY
+         */
+        $exp_by_cat_this_month = Expense::select('*')
+            ->join('categories', 'expenses.category_id', '=', 'categories.id')
+            ->where(function ($query) {
+                $query->where('expenses.user_id', Auth::user()->id)
+                    ->orWhereIn('expenses.group_id', explode(" ", Auth::user()->group_id));
+            })
+            ->whereYear('expenses.date', $thisYear)
+            ->whereMonth('expenses.date', $thisMonth)
+            ->select(
+                'category_id',
+                DB::raw("SUM( ( CASE WHEN category_id THEN value END ) ) AS total")
+            )
+            ->groupBy('category_id')
+            ->get();
+
+        $exp_without_cat_this_month = Expense::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })
+            ->whereYear('date', $thisYear)
+            ->whereMonth('date', $thisMonth)
+            ->select(
+                DB::raw("SUM( ( CASE WHEN category_id is null THEN value END ) ) AS total")
+            )
             ->get();
 
         /*
@@ -321,6 +349,8 @@ class HomeController extends Controller
                 [
                     'exp_by_budget_this_month',
                     'exp_by_budget_prev_month',
+                    'exp_by_cat_this_month',
+                    'exp_without_cat_this_month',
                     'save_by_budget_prev_month',
                     'save_by_budget_this_month',
                     'investments',
