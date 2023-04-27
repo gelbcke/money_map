@@ -6,7 +6,40 @@
 ])
 
 @section('content')
-
+	<!-- TradingView Widget BEGIN -->
+	<div class="tradingview-widget-container">
+		<div class="tradingview-widget-container__widget"></div>
+		<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-tickers.js" async>
+			{
+				"symbols": [{
+						"description": "USD/BRL",
+						"proName": "FX_IDC:USDBRL"
+					},
+					{
+						"description": "Bovespa",
+						"proName": "INDEX:IBOV"
+					},
+					{
+						"description": "IFIX",
+						"proName": "BMFBOVESPA:IFIX"
+					},
+					{
+						"proName": "BITSTAMP:BTCUSD",
+						"title": "Bitcoin"
+					},
+					{
+						"proName": "BITSTAMP:ETHUSD",
+						"title": "Ethereum"
+					}
+				],
+				"colorTheme": "dark",
+				"isTransparent": false,
+				"showSymbolLogo": true,
+				"locale": "en"
+			}
+		</script>
+	</div>
+	<!-- TradingView Widget END -->
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<div class="container-fluid">
