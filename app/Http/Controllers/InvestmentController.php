@@ -23,7 +23,7 @@ class InvestmentController extends Controller
             $query->where('user_id', Auth::user()->id)
                 ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
-            ->groupBy('org_id')
+            ->whereNull('org_id')
             ->get();
 
         $banks = Bank::where(function ($query) {
@@ -125,7 +125,9 @@ class InvestmentController extends Controller
     public function show(Investment $investment)
     {
         //
-        return view('investments.details', compact('investment'));
+        $investment_rec = Investment::where('org_id', $investment->id)->orderBy('date', 'desc')->get();
+
+        return view('investments.details', compact('investment', 'investment_rec'));
     }
 
     /**
