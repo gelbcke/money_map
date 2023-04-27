@@ -26,6 +26,9 @@
 						<button data-toggle="modal" data-target="#create_new" class="btn btn-sm btn-info">
 							{{ __('investments.create_new') }}
 						</button>
+						<a href="{{ route('investments.calculator') }}" class="btn btn-sm btn-default">
+							{{ __('investments.calculator') }}
+						</a>
 					</div>
 					<div class="card-body p-0">
 						<div class="table-responsive">

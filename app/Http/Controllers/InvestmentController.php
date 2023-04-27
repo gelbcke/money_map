@@ -163,4 +163,9 @@ class InvestmentController extends Controller
     {
         //
     }
+
+    public function calculator()
+    {
+        return view('investments.calculator')->render();
+    }
 }

@@ -28,6 +28,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('invoices/to_pay', '\App\Http\Controllers\InvoiceController@to_pay')->name('invoices.to_pay');
     Route::get('invoices/to_pay/{id}', '\App\Http\Controllers\InvoiceController@submitpayment')->name('invoices.submitpayment');
 
+    Route::get('investments/calculator', 'App\Http\Controllers\InvestmentController@calculator')->name('investments.calculator');
+
     Route::get('banks/credit_card/{bank}', 'App\Http\Controllers\BankController@show_credit_card')->name('banks.show_credit_card');
 
     Route::put('notifications/mark_readed/{id}', 'App\Http\Controllers\NotificationController@mark_readed')->name('notifications.mark_readed');
@@ -57,6 +59,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('user_groups/get_in/{group_id}/{user_id}', 'App\Http\Controllers\UserGroupController@GetInGroup')->name('user_groups.get_in');
     Route::get('user_groups/get_out/{group_id}/{user_id}', 'App\Http\Controllers\UserGroupController@GetOutGroup')->name('user_groups.get_out');
     Route::post('user_groups/remove_user/{group_id}/{user_id}', 'App\Http\Controllers\UserGroupController@remove_user')->name('user_groups.remove_user');
+
     Route::post('investments/insert_yield/{id}', 'App\Http\Controllers\InvestmentController@insert_yield')->name('investments.insert_yield');
     Route::post('budgets/default_budget', 'App\Http\Controllers\BudgetController@default_budget')->name('budgets.default_budget');
     Route::post('budgets/deactivate/{id}', 'App\Http\Controllers\BudgetController@disable')->name('budgets.disable');
