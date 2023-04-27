@@ -507,11 +507,11 @@
 			var salesChart = new Chart($salesChart, {
 				type: 'bar',
 				data: {
-					labels: {!! $parceled_expenses->pluck('month') !!},
+					labels: {!! $parceled_expenses->pluck('monthname') !!},
 					datasets: [{
 						backgroundColor: '#007bff',
 						borderColor: '#007bff',
-						data: {!! $parceled_expenses->pluck('total') !!}
+						data: {{ $parceled_expenses->pluck('total') }}
 					}]
 				},
 				options: {

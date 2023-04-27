@@ -97,7 +97,8 @@ class HomeController extends Controller
             ->whereMonth('credit_parcels.date', '>=', $thisMonth)
             ->select(
                 DB::raw('sum(credit_parcels.parcel_vl) as total'),
-                DB::raw("month (credit_parcels.date) as month"),
+                DB::raw("month(credit_parcels.date) as month"),
+                DB::raw("monthname(credit_parcels.date) as monthname"),
                 DB::raw("year (credit_parcels.date) as year"),
             )
             ->groupby('year', 'month')
