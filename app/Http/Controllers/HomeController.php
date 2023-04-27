@@ -93,8 +93,7 @@ class HomeController extends Controller
                 $query->where('user_id', Auth::user()->id)
                     ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
             })
-            ->whereYear('credit_parcels.date', '>=', $thisYear)
-            ->whereMonth('credit_parcels.date', '>=', $thisMonth)
+            ->whereDate('credit_parcels.date', '>=', $thisYear . '-' . $thisMonth . '-01')
             ->select(
                 DB::raw('sum(credit_parcels.parcel_vl) as total'),
                 DB::raw("month(credit_parcels.date) as month"),
@@ -102,6 +101,8 @@ class HomeController extends Controller
                 DB::raw("year (credit_parcels.date) as year"),
             )
             ->groupby('year', 'month')
+            ->offset(0)
+            ->limit(12)
             ->get();
 
         /*
