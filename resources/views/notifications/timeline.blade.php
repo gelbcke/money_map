@@ -6,7 +6,6 @@
 ])
 
 @section('content')
-
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 		<div class="container-fluid">
@@ -21,16 +20,17 @@
 	<section class="content">
 		<div class="row">
 			<div class="col-md-12">
-				<div class="card">
-					@if (session()->has('message'))
-						<div class="alert alert-success">
-							{{ session()->get('message') }}
-						</div>
-					@endif
-					<!-- /.card-header -->
-					<div class="card-body">
-						<ul class="todo-list" data-widget="todo-list">
-							@foreach ($notifications as $value)
+
+				@if (session()->has('message'))
+					<div class="alert alert-success">
+						{{ session()->get('message') }}
+					</div>
+				@endif
+
+				@foreach ($notifications as $value)
+					<div class="card">
+						<div class="card-body p-0">
+							<ul class="todo-list" data-widget="todo-list">
 								<li>
 									<!-- checkbox -->
 									<div class="icheck-primary d-inline ml-2">
@@ -45,15 +45,13 @@
 										@endif
 									</div>
 								</li>
-							@endforeach
-						</ul>
+							</ul>
+						</div>
 					</div>
-				</div>
+				@endforeach
 			</div>
 		</div>
 	</section>
-
-
 	@if ($errors->any())
 		<div class="toasts-top-right fixed">
 			<div class="toast bg-danger fade show" role="alert" aria-live="assertive" aria-atomic="true">
@@ -75,7 +73,6 @@
 @section('scripts')
 	<script type="application/javascript">
 		$('.toggle-class').on('change',function(){
-
             let status = $(this).prop('checked') == true ? true : false;
             let readed = $(this).data('readed');
             let id = $(this).data('id');

@@ -22,67 +22,66 @@
 		<div class="row">
 			<div class="col-md-12">
 				<div class="card">
-					<div class="card-header">
-						<h5 class="card-title">{{ __('bank.credit_card') }}</h5>
-					</div>
-					<div class="card-body">
-						@if ($errors->any())
-							<div class="alert alert-danger">
-								<strong>Whoops!</strong> There were some problems with your input.<br><br>
-								<ul>
-									@foreach ($errors->all() as $error)
-										<li>{{ $error }}</li>
-									@endforeach
-								</ul>
+					@if ($errors->any())
+						<div class="alert alert-danger">
+							<strong>Whoops!</strong> There were some problems with your input.<br><br>
+							<ul>
+								@foreach ($errors->all() as $error)
+									<li>{{ $error }}</li>
+								@endforeach
+							</ul>
+						</div>
+					@endif
+					@if ($invoices->count() > 0)
+						<div class="card-body p-0">
+							<div class="table-responsive">
+								<table class="table-striped table">
+									<thead class="text-primary">
+										<th>
+											{{ __('bank.credit_card') }} / {{ __('general.menu.accounts') }}
+										</th>
+										<th>
+											{{ __('bank.due_date') }}
+										</th>
+										<th>
+											{{ __('invoices.value_open') }}
+										</th>
+										<th>
+											{{ __('general.info.registred_at') }}
+										</th>
+										<th>
+										</th>
+									</thead>
+									<tbody>
+										@foreach ($invoices as $value)
+											<tr>
+												<td>
+													{{ $value->bank->name }} <small>({{ $value->user->name }})</small>
+												</td>
+												<td>
+													{{ date('d/m/Y', strtotime($value->due_date)) }}
+												</td>
+												<td>
+													{{ __('general.M_s') . ' ' . number_format($value->value, 2) }}
+												</td>
+												<td>
+													{{ date('d/m/Y H:i:s', strtotime($value->updated_at)) }}
+												</td>
+												<td>
+													<a href="{{ route('invoices.submitpayment', $value->id) }}" type="button"
+														class="btn btn-block btn-warning btn-xs">
+														{{ __('invoices.submit_payment') }}
+													</a>
+												</td>
+											</tr>
+										@endforeach
+									</tbody>
+								</table>
 							</div>
-						@endif
-						@if ($invoices->count() > 0)
-							<table class="table">
-								<thead class="text-primary">
-									<th>
-										{{ __('bank.credit_card') }} / {{ __('general.menu.accounts') }}
-									</th>
-									<th>
-										{{ __('bank.due_date') }}
-									</th>
-									<th>
-										{{ __('invoices.value_open') }}
-									</th>
-									<th>
-										{{ __('general.info.registred_at') }}
-									</th>
-									<th>
-									</th>
-								</thead>
-								<tbody>
-									@foreach ($invoices as $value)
-										<tr>
-											<td>
-												{{ $value->bank->name }} <small>({{ $value->user->name }})</small>
-											</td>
-											<td>
-												{{ date('d/m/Y', strtotime($value->due_date)) }}
-											</td>
-											<td>
-												{{ __('general.M_s') . ' ' . number_format($value->value, 2) }}
-											</td>
-											<td>
-												{{ date('d/m/Y H:i:s', strtotime($value->updated_at)) }}
-											</td>
-											<td>
-												<a href="{{ route('invoices.submitpayment', $value->id) }}" type="button"
-													class="btn btn-block btn-warning btn-xs">
-													{{ __('invoices.submit_payment') }}
-												</a>
-											</td>
-										</tr>
-									@endforeach
-								</tbody>
-							</table>
-						@else
-							{{ __('invoices.no_invoices_to_pay') }}
-						@endif
-					</div>
+						</div>
+					@else
+						{{ __('invoices.no_invoices_to_pay') }}
+					@endif
 				</div>
 			</div>
 		</div>
