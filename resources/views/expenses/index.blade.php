@@ -89,7 +89,7 @@
 											</td>
 											<td>
 												@if ($value->category_id)
-													<a href="{{ route('categories.show', $value->category_id) }}">
+													<a href="{{ route('categories.show', [$value->category_id, 'date' => date('m-Y')]) }}">
 														{{ $value->category->name }}
 													</a>
 												@else

@@ -24,4 +24,9 @@ class Category extends Model
     {
         return $this->belongsTo(UserGroup::class);
     }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class, 'category_id');
+    }
 }

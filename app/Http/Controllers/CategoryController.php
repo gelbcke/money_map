@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\Expense;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
@@ -67,9 +70,24 @@ class CategoryController extends Controller
      * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(Category $category, Request $request)
     {
         //
+        $dateMonthArray = explode('-', $request->date);
+        $month = $dateMonthArray[0];
+        $year = $dateMonthArray[1];
+        $period = Carbon::createFromDate($year, $month)->startOfMonth();
+
+        $start_date = Carbon::parse($period)->startOfMonth()->setDay(1)->format('Y-m-d');
+        $end_date   = Carbon::parse($period)->startOfMonth()->setDay(31)->format('Y-m-d');
+
+        $exp_details = Expense::where('category_id', $category->id)
+            ->whereBetween('date', [$start_date, $end_date])
+            ->orderBy('date', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('categories.details', compact('category', 'exp_details', 'request'));
     }
 
     /**
