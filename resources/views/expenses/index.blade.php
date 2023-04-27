@@ -38,7 +38,7 @@
 					</div>
 					<div class="card-body p-0">
 						<div class="table-responsive">
-							<table class="table">
+							<table class="table-striped table">
 								<thead class="text-primary">
 									<th>
 										{{ __('general.date') }}

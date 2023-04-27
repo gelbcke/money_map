@@ -29,9 +29,9 @@
 							{{ session()->get('message') }}
 						</div>
 					@endif
-					<div class="card-body">
+					<div class="card-body p-0">
 						<div class="table-responsive">
-							<table class="table">
+							<table class="table-striped table">
 								<thead class="text-primary">
 									<th>
 										{{ __('general.date') }}
@@ -95,8 +95,6 @@
 			</div>
 		</div>
 	</section>
-
-
 	@if ($errors->any())
 		<div class="toasts-top-right fixed">
 			<div class="toast bg-danger fade show" role="alert" aria-live="assertive" aria-atomic="true">
