@@ -545,7 +545,7 @@
 					datasets: [{
 						backgroundColor: '#007bff',
 						borderColor: '#007bff',
-						data: {{ $parceled_expenses->pluck('total') }}
+						data: {!! $parceled_expenses->pluck('total') !!}
 					}]
 				},
 				options: {
