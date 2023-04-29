@@ -4,10 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Bank;
 use App\Models\Budget;
+use GuzzleHttp\Client;
 use App\Models\Investment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+
+use Illuminate\Support\Facades\Auth;
+use Scheb\YahooFinanceApi\ApiClient;
+use Scheb\YahooFinanceApi\ApiClientFactory;
 
 class InvestmentController extends Controller
 {
@@ -19,6 +23,47 @@ class InvestmentController extends Controller
     public function index()
     {
         //
+        $investments = Investment::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })
+            ->groupBy('ticker')
+            ->whereNull('org_id')
+            ->get();
+
+        $banks = Bank::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })
+            ->whereNotNull('f_invest')
+            ->get();
+
+        // Create a new client from the factory
+        $client = ApiClientFactory::createApiClient();
+
+        return view('investments.index', compact('investments', 'banks',  'client'));
+    }
+
+    /**
+     * Write code on Method
+     *
+     * @return response()
+     */
+    public function fetchSymbols(Request $request)
+    {
+        $client = ApiClientFactory::createApiClient();
+        $data['symbol'] = $client->search($request->symbol);
+
+        return response()->json($data);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
         $investments = Investment::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
                 ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
@@ -40,17 +85,25 @@ class InvestmentController extends Controller
             ->where('operation', 'SAVE')
             ->get();
 
-        return view('investments.index', compact('investments', 'banks', 'budgets'));
+        // Create a new client from the factory
+        $client = ApiClientFactory::createApiClient();
+
+        return view(
+            'investments.create',
+            compact('investments', 'banks', 'budgets', 'client')
+        );
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function symbolSearch(Request $request)
     {
-        //
+        $symbols = [];
+
+        if ($request->has('q')) {
+            $search = $request->q;
+            $symbols = ApiClientFactory::createApiClient()->search($search);
+        }
+
+        return response()->json($symbols);
     }
 
     /**
@@ -67,7 +120,9 @@ class InvestmentController extends Controller
         $request->validate([
             'date' => 'required',
             'value' => 'required',
-            'bank_id' => 'required'
+            'bank_id' => 'required',
+            'ticker' => 'required'
+
         ]);
 
         if (Auth::user()->group_id != NULL) {
@@ -76,7 +131,12 @@ class InvestmentController extends Controller
             $group_id = NULL;
         }
 
-        $investment = Investment::create($request->all() + ['user_id' => $user, 'operation' => 'IN', 'group_id' => $group_id]);
+        $investment = Investment::create($request->all() + [
+            'user_id' => $user,
+            'operation' => 'IN',
+            'group_id' => $group_id
+        ]);
+
         $investment->save();
 
         return redirect()->route('investments.index')
@@ -107,6 +167,7 @@ class InvestmentController extends Controller
             $yield->value = $request->input('value');
             $yield->date = $request->input('date');
             $yield->details = $request->input('details');
+            $yield->quantity = $investment->whereNull('org_id')->sum('quantity');
             $yield->save();
             return redirect()->route('investments.index')
                 ->with('success', 'Rendimento registrado com sucesso!');
@@ -125,9 +186,15 @@ class InvestmentController extends Controller
     public function show(Investment $investment)
     {
         //
-        $investment_rec = Investment::where('org_id', $investment->id)->orderBy('date', 'desc')->get();
+        $investment_rec = Investment::where('bank_id', $investment->bank_id)
+            ->where('ticker', $investment->ticker)
+            ->orderBy('date', 'desc')
+            ->orderBy('updated_at', 'desc')
+            ->get();
 
-        return view('investments.details', compact('investment', 'investment_rec'));
+        $client = ApiClientFactory::createApiClient();
+
+        return view('investments.details', compact('investment', 'investment_rec', 'client'));
     }
 
     /**

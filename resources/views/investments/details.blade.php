@@ -22,7 +22,7 @@
 			<div class="col-md-12">
 				<div class="card">
 					<div class="card-header">
-						<h5 class="card-title"><b>{{ $investment->bank->name }}</b>
+						<h5 class="card-title"><b>{{ $investment->ticker . ' - ' . $investment->bank->name }}</b>
 							<br>
 							<small>
 								{{ $investment->details }} - ID {{ $investment->id }}
@@ -33,57 +33,77 @@
 						</div>
 					</div>
 					<div class="card-body">
+						Total Investido:
+						{{ __('general.M_s') .' ' .number_format($total_spent = $investment->whereNull('org_id')->where('ticker', $investment->ticker)->where('bank_id', $investment->bank_id)->sum('value'),2) }}
+						@if ($investment->invest_group == 'RV')
+							<br>
+							Carteira:
+							{{ __('general.M_s') .' ' .number_format($total_now =collect($client->getQuote($investment->ticker))->get('ask') *$investment->where('bank_id', $investment->bank_id)->whereNull('org_id')->where('ticker', $investment->ticker)->sum('quantity'),2) }}
+							<br>
+							Preco medio:
+							{{ __('general.M_s') .' ' .($pm = number_format($investment->whereNull('org_id')->where('bank_id', $investment->bank_id)->where('ticker', $investment->ticker)->sum('value') /$investment->where('bank_id', $investment->bank_id)->whereNull('org_id')->where('ticker', $investment->ticker)->sum('quantity'),2)) }}
+							<br>
+							P/L: {{ __('general.M_s') . ' ' . ($pl = number_format($total_now - $total_spent, 2)) }}
+							<br>
 
-						{{ __('general.date') }}: {{ $investment->date->format('d/m/Y') }}
+							Var: {{ number_format((($total_now - $total_spent) / $total_spent) * 100, 2) }} %
+						@endif
 						<br>
-						{{ __('investments.initial_value') }}
-						: {{ __('general.M_s') }} {{ number_format($investment->value, 2) }}
-						<br>
-						{{ __('investments.profit') }}
-						: {{ __('general.M_s') }}
-						{{ number_format($investment->where('org_id', $investment->id)->sum('value'), 2) }}
+						Rendimentos:
+						{{ __('general.M_s') .' ' .number_format($dividends = $investment->where('bank_id', $investment->bank_id)->whereNotNull('org_id')->where('ticker', $investment->ticker)->sum('value'),2) }}
+
 						<hr>
-						{{ __('investments.balance') }}
-						: {{ __('general.M_s') }}
-						{{ number_format($investment->where('org_id', $investment->id)->sum('value') + $investment->value, 2) }}
-						<br>
+						Lucro Real:
+						@if ($investment->invest_group == 'RV')
+							{{ __('general.M_s') .' ' .number_format($investment->where('bank_id', $investment->bank_id)->whereNotNull('org_id')->where('ticker', $investment->ticker)->sum('value') + $pl,2) }}
+						@else
+							{{ __('general.M_s') . ' ' . number_format($total_spent + $dividends, 2) }}
+						@endif
 					</div>
 				</div>
 			</div>
 		</div>
+		<div class="card-body">
+			<!-- The timeline -->
+			<div class="timeline timeline-inverse">
+				<!-- timeline time label -->
+				<div class="time-label">
+					<span class="bg-danger">
+						{{ date('d M Y') }}
+					</span>
+				</div>
+				<!-- /.timeline-label -->
+				@foreach ($investment_rec as $investment)
+					<!-- timeline item -->
+					<div>
+						@if ($investment->operation == 'IN' && $investment->org_id == null)
+							<i class="fas fa-cart-shopping bg-primary"></i>
+						@elseif($investment->operation == 'IN' && $investment->org_id != null)
+							<i class="fas fa-arrow-up bg-success"></i>
+						@else
+							<i class="fas fa-arrow-down bg-danger"></i>
+						@endif
+						<div class="timeline-item">
+							<span class="time"><i class="far fa-calendar"></i> {{ $investment->date->format('d/m/Y') }}</span>
 
-		<!-- The timeline -->
-		<div class="timeline timeline-inverse">
-			<!-- timeline time label -->
-			<div class="time-label">
-				<span class="bg-danger">
-					{{ date('d M Y') }}
-				</span>
-			</div>
-			<!-- /.timeline-label -->
+							<h3 class="timeline-header"><a
+									href="{{ route('banks.show', $investment->bank->id) }}">{{ $investment->bank->name }}</a>
+								<br>{{ __('general.M_s') . ' ' . number_format($investment->value, 2) }}
+							</h3>
 
-			@foreach ($investment_rec as $value)
-				<!-- timeline item -->
-				<div>
-
-					@if ($value->operation == 'IN')
-						<i class="fas fa-arrow-up bg-success"></i>
-					@else
-						<i class="fas fa-arrow-down bg-danger"></i>
-					@endif
-					<div class="timeline-item">
-						<span class="time"><i class="far fa-calendar"></i> {{ $value->date->format('d/m/Y') }}</span>
-
-						<h3 class="timeline-header"><a href="{{ route('banks.show', $value->bank->id) }}">{{ $value->bank->name }}</a>
-							{{ $value->operation }} </h3>
-
-						<div class="timeline-body">
-							{{ $value->details }}
+							<div class="timeline-body">
+								{{ $investment->quantity . ' UN - ' . __('investments.price') . ' ' . __('general.M_s') . ' ' . number_format($investment->buy_price, 2) }}
+								<br>
+								{{ $investment->details }}
+							</div>
 						</div>
 					</div>
+					<!-- END timeline item -->
+				@endforeach
+				<div>
+					<i class="far fa-clock bg-gray"></i>
 				</div>
-				<!-- END timeline item -->
-			@endforeach
+			</div>
 		</div>
 	</section>
 @endsection

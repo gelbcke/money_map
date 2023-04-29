@@ -12,7 +12,8 @@
         "laravel/sanctum": "^2.14.1",
         "laravel/tinker": "^2.7",
         "laravel/ui": "^3.4",
-        "ramsey/uuid-doctrine": "^2.0"
+        "ramsey/uuid-doctrine": "^2.0",
+        "scheb/yahoo-finance-api": "^4.5"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",

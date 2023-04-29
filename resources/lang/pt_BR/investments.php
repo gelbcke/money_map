@@ -6,5 +6,15 @@ return [
     'initial_value' => 'Valor inicial',
     'calculator' => 'Calculadora',
     'profit' => 'Lucro',
-    'balance' => 'Saldo'
+    'balance' => 'Saldo',
+    'price' => 'Preço',
+    'ticket' => 'Ticket',
+    'current_quote' => 'Cotação Atual',
+    'average_price' => 'Preço Médio',
+    'buy_price' => 'Preço de Compra',
+    'sell_price' => 'Preço de Venda',
+    'quantity' => 'Quantidade de Cotas',
+    'paper' => 'Papel',
+    'variable_returns' => 'Renda Variável',
+    'fixed_returns' => 'Renda Fixa',
 ];

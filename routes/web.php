@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Redirect;
+use Scheb\YahooFinanceApi\ApiClientFactory;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,6 +30,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('invoices/to_pay/{id}', '\App\Http\Controllers\InvoiceController@submitpayment')->name('invoices.submitpayment');
 
     Route::get('investments/calculator', 'App\Http\Controllers\InvestmentController@calculator')->name('investments.calculator');
+
+    Route::get('investments/symbol-search', ['\App\Http\Controllers\InvestmentController', 'symbolSearch']);
 
     Route::get('banks/credit_card/{bank}', 'App\Http\Controllers\BankController@show_credit_card')->name('banks.show_credit_card');
 
