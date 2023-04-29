@@ -5,44 +5,6 @@
 ])
 
 @section('content')
-	<!-- TradingView Widget BEGIN -->
-	<div class="tradingview-widget-container">
-		<div class="tradingview-widget-container__widget"></div>
-		<script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
-			{
-				"symbols": [{
-						"description": "USD/BRL",
-						"proName": "FX_IDC:USDBRL"
-					},
-					{
-						"description": "Bovespa",
-						"proName": "INDEX:IBOV"
-					},
-					{
-						"description": "IFIX",
-						"proName": "INDEX:IFIX"
-					},
-					{
-						"description": "Bitcoin",
-						"proName": "COINBASE:BTCUSD"
-					},
-					{
-						"description": "Ethereum",
-						"proName": "COINBASE:ETHUSD"
-					}
-				],
-				"showSymbolLogo": true,
-				"colorTheme": "dark",
-				"isTransparent": false,
-				"displayMode": "regular",
-				"locale": "en"
-			}
-		</script>
-	</div>
-	<!-- TradingView Widget END -->
-
-
-
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
 	</section>
@@ -82,7 +44,6 @@
 								<font size="1">
 									- ( Parcelas: {{ __('general.M_s') . ' ' . number_format($sum_parcels_this_month->sum('parcel_vl'), 2) }} )
 								</font>
-
 							</span>
 						</div>
 						<!-- /.info-box-content -->
@@ -90,7 +51,6 @@
 					<!-- /.info-box -->
 				</div>
 				<!-- /.col -->
-
 				<!-- fix for small devices only -->
 				<div class="clearfix hidden-md-up"></div>
 				<div class="col-12 col-sm-6 col-md-3">
@@ -147,7 +107,6 @@
 											<td>{{ $value->budget }}</td>
 											<td>{{ __('budget.' . $value->name) }}</td>
 											<td>
-
 												@foreach ($exp_by_budget_prev_month as $vl)
 													@if ($vl->budget_id == $value->id)
 														@if ($get_income_prev_month > 0)
@@ -174,7 +133,6 @@
 														@endif
 													@endif
 												@endforeach
-
 											</td>
 											<td>
 												<span class="badge">
@@ -212,7 +170,6 @@
 														</div>
 													@endif
 												@endforeach
-
 											</td>
 											<td>
 												<span class="badge">
@@ -302,7 +259,6 @@
 														</div>
 													@endif
 												@endforeach
-
 											</td>
 											<td>
 												<span class="badge">
