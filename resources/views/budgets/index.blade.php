@@ -13,6 +13,27 @@
 	<section class="content">
 		<div class="row">
 			<div class="col-md-12">
+				@if ($budgets->where('status', 1)->sum('budget') == 100)
+					<div class="callout callout-success">
+						<h5>{{ __('budget.sum_message.success_title') }}</h5>
+
+						<p>{{ __('budget.sum_message.success') }}</p>
+					</div>
+				@elseif ($budgets->where('status', 1)->sum('budget') < 100)
+					<div class="callout callout-warning">
+						<h5>{{ __('budget.sum_message.warning_title') }}</h5>
+
+						<p>{{ __('budget.sum_message.warning') }}</p>
+					</div>
+				@elseif ($budgets->where('status', 1)->sum('budget') > 100)
+					<div class="callout callout-danger">
+						<h5>{{ __('budget.sum_message.danger_title') }}</h5>
+
+						<p>{{ __('budget.sum_message.danger') }}</p>
+					</div>
+				@endif
+			</div>
+			<div class="col-md-12">
 				<div class="card">
 					<div class="card-header">
 						<h5 class="card-title">{{ __('budget.title') }}</h5>
@@ -31,13 +52,7 @@
 						</div>
 					@endif
 					<div class="card-body p-0">
-						@if ($budgets->where('status', 1)->sum('budget') > 100)
-							<div class="alert alert-danger">
-								<strong>{{ __('messages.attention') }}!</strong>
-								<p>{{ __('messages.over_budget') }}</p>
-							</div>
-						@endif
-						@if ($budgets->count() == 0)
+						@if ($budgets->where('status', 1)->count() == 0)
 							<div class="col-md-12">
 								<form action="{{ route('budgets.default_budget') }}" method="POST">
 									@csrf
@@ -57,6 +72,9 @@
 											{{ __('general.menu.budget') }}
 										</th>
 										<th>
+											{{ __('budget.operation') }}
+										</th>
+										<th>
 											{{ __('general.info.registred_by') }}
 										</th>
 										<th style="width: 20%">
@@ -65,11 +83,14 @@
 									<tbody>
 										@foreach ($budgets as $value)
 											<tr>
-												<td>
-													{{ __('budget.' . $value->name) }}
+												<td title="{{ $value->description }}">
+													{{ $value->name }}
 												</td>
 												<td>
 													{{ $value->budget }}%
+												</td>
+												<td>
+													{{ __('budget.' . $value->operation) }}
 												</td>
 												<td>
 													{{ $value->user->name }}
@@ -96,12 +117,20 @@
 															</button>
 														@endif
 													</form>
-
 												</td>
 											</tr>
 										@endforeach
 									</tbody>
 								</table>
+							</div>
+							<div class="card-body">
+								<div class="progress mb-3">
+									<div @if ($budgets->where('status', 1)->sum('budget') == '100') class="progress-bar bg-success" @else class="progress-bar bg-info" @endif
+										role="progressbar" aria-valuenow="{{ $budgets->where('status', 1)->sum('budget') }}" aria-valuemin="0"
+										aria-valuemax="100" style="width: {{ $budgets->where('status', 1)->sum('budget') }}%"
+										title="{{ $budgets->where('status', 1)->sum('budget') }}%">
+									</div>
+								</div>
 							</div>
 						@endif
 					</div>

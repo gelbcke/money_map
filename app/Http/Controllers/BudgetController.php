@@ -153,10 +153,10 @@ class BudgetController extends Controller
         if (($budgets + $request->input('budget')) <= 100) {
             $budget->update($request->all() + ['user_id' => $user, 'group_id' => $group_id]);
 
-            return redirect()->route('budgets.edit', $budget->id)
+            return redirect()->route('budgets.index', $budget->id)
                 ->with('success', 'Orçamento Editado com sucesso!');
         } else {
-            return redirect()->route('budgets.edit', $budget->id)
+            return redirect()->route('budgets.index', $budget->id)
                 ->with('error', 'A soma dos orçamentos é superior á 100%');
         }
     }
