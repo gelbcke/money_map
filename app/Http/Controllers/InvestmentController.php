@@ -29,6 +29,7 @@ class InvestmentController extends Controller
         })
             ->groupBy('ticker')
             ->whereNull('org_id')
+            ->orderBy('value', 'desc')
             ->get();
 
         $banks = Bank::where(function ($query) {
