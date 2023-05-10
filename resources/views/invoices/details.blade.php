@@ -86,6 +86,12 @@
 							<th style="width: 20%; text-align: center">
 								{{ __('general.info.registred_by') }}
 							</th>
+							<th tyle="width: 20%; text-align: center">
+								{{ __('general.budget') }}
+							</th>
+							<th tyle="width: 20%; text-align: center">
+								{{ __('general.category') }}
+							</th>
 							<th>
 								{{ __('general.details') }}
 							</th>
@@ -104,6 +110,16 @@
 								<td style="width: 20%; text-align: center">
 									{{ $value->user->name }}
 								</td>
+								<td tyle="width: 20%; text-align: center">
+									{{ $value->budget->name }}
+								</td>
+								<td tyle="width: 20%; text-align: center">
+									@if ($value->category_id)
+										{{ $value->category->name }}
+									@else
+										{{ __('category.empty') }}
+									@endif
+								</td>
 								<td>
 									{{ $value->details }}
 								</td>
@@ -119,6 +135,16 @@
 								</td>
 								<td style="width: 20%; text-align: center">
 									{{ $value->expense->user->name }}
+								</td>
+								<td tyle="width: 20%; text-align: center">
+									{{ $value->expense->budget->name }}
+								</td>
+								<td tyle="width: 20%; text-align: center">
+									@if ($value->expense->category_id)
+										{{ $value->expense->category->name }}
+									@else
+										{{ __('category.empty') }}
+									@endif
 								</td>
 								<td>
 									{{ $value->expense->details }}
@@ -145,7 +171,7 @@
 					<table class="table">
 						<tr>
 							<th>Total:</th>
-							<td> {{ __('general.M_s') . ' ' . number_format($invoices, 2) }}</td>
+							<td style="text-align:right"> {{ __('general.M_s') . ' ' . number_format($invoices, 2) }}</td>
 						</tr>
 					</table>
 				</div>
@@ -153,18 +179,6 @@
 			<!-- /.col -->
 		</div>
 		<!-- /.row -->
-
-		<!-- this row will not appear when printing -->
-		<div class="row no-print">
-			<div class="col-12">
-				<a href="#" type="button" class="btn btn-success float-right">
-					<i class="far fa-credit-card"></i> {{ __('invoices.submit_payment') }}
-				</a>
-				<button type="button" class="btn btn-primary float-right" style="margin-right: 5px;">
-					<i class="fas fa-download"></i> Generate PDF
-				</button>
-			</div>
-		</div>
 	</div>
 	<!-- /.invoice -->
 @endsection
