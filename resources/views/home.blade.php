@@ -105,7 +105,7 @@
 									@foreach ($get_out_budgets as $value)
 										<tr>
 											<td>{{ $value->budget }}</td>
-											<td>{{ __('budget.' . $value->name) }}</td>
+											<td>{{ $value->name }}</td>
 											<td>
 												@foreach ($exp_by_budget_prev_month as $vl)
 													@if ($vl->budget_id == $value->id)
@@ -144,7 +144,7 @@
 									@foreach ($get_save_budgets as $value)
 										<tr>
 											<td>{{ $value->budget }}</td>
-											<td>{{ __('budget.' . $value->name) }}</td>
+											<td>{{ $value->name }}</td>
 											<td>
 												@foreach ($save_by_budget_prev_month as $vl)
 													@if ($get_income_prev_month > 0)
@@ -203,7 +203,7 @@
 									@foreach ($get_out_budgets as $value)
 										<tr>
 											<td>{{ $value->budget }}</td>
-											<td>{{ __('budget.' . $value->name) }}</td>
+											<td>{{ $value->name }}</td>
 											<td>
 												@foreach ($exp_by_budget_this_month as $vl)
 													@if ($vl->budget_id == $value->id)
@@ -238,7 +238,7 @@
 									@foreach ($get_save_budgets as $value)
 										<tr>
 											<td>{{ $value->budget }}</td>
-											<td>{{ __('budget.' . $value->name) }}</td>
+											<td>{{ $value->name }}</td>
 											<td>
 												@foreach ($save_by_budget_this_month as $vl)
 													@if ($get_income_this_month > 0)
@@ -355,8 +355,11 @@
 											<th>
 												{{ __('general.bank') }} / {{ __('general.account') }}
 											</th>
+											<th>
+												{{ __('general.budget') }}
+											</th>
 											<th class="text-right">
-												{{ __('general.category') }}
+												{{ __('general.details') }}
 											</th>
 										</thead>
 										<tbody>
@@ -365,6 +368,7 @@
 													<td>
 														{{ $value->date->format('d/m/Y') }}
 													</td>
+
 													<td>
 														{{ __('general.M_s') }} {{ number_format($value->value, 2) }}
 													</td>
@@ -380,8 +384,11 @@
 															{{ __('general.not_informed') }}
 														@endif
 													</td>
+													<td>
+														{{ $value->budget->name }}
+													</td>
 													<td class="text-right">
-														{{ __('budget.' . $value->budget->name) }}
+														{{ $value->details }}
 													</td>
 												</tr>
 											@endforeach
@@ -413,7 +420,10 @@
 												{{ __('general.value') }}
 											</th>
 											<th>
-												{{ __('general.category') }}
+												{{ __('general.bank') }}
+											</th>
+											<th>
+												{{ __('general.budget') }}
 											</th>
 											<th class="text-right">
 												{{ __('general.details') }}
@@ -429,7 +439,10 @@
 														{{ __('general.M_s') }} {{ number_format($value->value, 2) }}
 													</td>
 													<td>
-														{{ __('budget.' . $value->budget->name) }}
+														{{ $value->bank->name }}
+													</td>
+													<td>
+														{{ $value->budget->name }}
 													</td>
 													<td class="text-right">
 														{{ $value->details }}

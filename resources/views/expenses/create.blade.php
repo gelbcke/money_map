@@ -78,7 +78,7 @@
 										<select id="budget_id" name="budget_id" class="form-control">
 											<option value=""> --- {{ __('general.menu.select') }} ---</option>
 											@foreach ($budgets as $value)
-												<option value="{{ $value->id }}">{{ __('budget.' . $value->name) }}</option>
+												<option value="{{ $value->id }}">{{ $value->name }}</option>
 											@endforeach
 										</select>
 										@include('alerts.feedback', ['field' => 'budget_id'])

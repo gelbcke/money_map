@@ -14,6 +14,7 @@ return [
     'total' => 'Total',
     'total_to_pay' => 'Total á Pagar',
     'bank' => 'Banco',
+    'budget' => 'Orçamento',
     'account' => 'Conta',
     'owner' => 'Proprietário',
     'wallet' => 'Carteira',

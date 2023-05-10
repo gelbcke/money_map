@@ -117,7 +117,7 @@
 													    ) }}
 												</td>
 												<td>
-													<a href="{{ route('invoices.show', [$value->id, 'date' => $now]) }}">
+													<a href="{{ route('invoices.show', [$value->id, 'date' => $now]) }}" target="_blank">
 														<i class="fa fa-eye"></i>
 													</a>
 												</td>

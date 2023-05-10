@@ -70,7 +70,7 @@
 											<td>
 												{{ $value->date->format('d/m/Y') }}
 											</td>
-											<td title="{{ __('budget.' . $value->budget->name) }}">
+											<td title="{{ $value->budget->name }}">
 												{{ __('general.M_s') . ' ' . number_format($value->value, 2) }}
 												@if ($value->rec_expense)
 													<small>
@@ -85,7 +85,7 @@
 												@endif
 											</td>
 											<td>
-												{{ __('budget.' . $value->budget->name) }}
+												{{ $value->budget->name }}
 											</td>
 											<td>
 												@if ($value->category_id)

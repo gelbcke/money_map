@@ -90,7 +90,7 @@
 											<option value=""> --- {{ __('general.menu.select') }} ---</option>
 											@foreach ($budgets as $value)
 												<option value="{{ $value->id }}" @if ($expense->budget_id == $value->id) selected @endif>
-													{{ __('budget.' . $value->name) }}</option>
+													{{ $value->name }}</option>
 											@endforeach
 										</select>
 										@include('alerts.feedback', ['field' => 'budget_id'])
