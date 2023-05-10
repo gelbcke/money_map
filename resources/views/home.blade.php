@@ -402,7 +402,7 @@
 							<h4 class="card-title">{{ __('home.recurring_expenses') }}</h4>
 						</div>
 						<div class="card-body p-0">
-							@if ($rec_expenses->count() > 0)
+							@if ($rec_expenses)
 								<div class="table-responsive">
 									<table class="table">
 										<thead class="text-primary">
@@ -420,7 +420,7 @@
 											</th>
 										</thead>
 										<tbody>
-											@foreach ($rec_expenses->get() as $value)
+											@foreach ($rec_expenses as $value)
 												<tr>
 													<td>
 														{{ __('general.every_day') }} {{ $value->date->format('d') }}
@@ -447,36 +447,6 @@
 				</div>
 			</div>
 			<div class="row">
-				<div class="col-md-3">
-					<div class="card card-tasks">
-						<div class="card-header">
-							<h5 class="card-category">{{ __('home.expenses') }}</h5>
-							<h4 class="card-title">{{ __('home.by_month') }}</h4>
-						</div>
-						<div class="card-body p-0">
-							@if ($sum_expenses_month->count() > 0)
-								<div class="table-full-width table-responsive">
-									<table class="table">
-										<tbody>
-											@foreach ($sum_expenses_month as $vl)
-												<tr>
-													<td>
-														{{ __($vl->months) }}
-													</td>
-													<td>
-														{{ __('general.M_s') . ' ' . number_format($vl->value + $sum_parcels_this_month->sum('parcel_vl'), 2) }}
-													</td>
-												</tr>
-											@endforeach
-										</tbody>
-									</table>
-								</div>
-							@else
-								<h6 class="card-footer">{{ __('messages.no_records_found') }}</h6>
-							@endif
-						</div>
-					</div>
-				</div>
 				<div class="col-md-3">
 					<div class="card card-tasks">
 						<div class="card-header">
@@ -566,7 +536,6 @@
 							},
 							ticks: $.extend({
 								beginAtZero: true,
-
 								// Include a dollar sign in the ticks
 								callback: function(value) {
 									if (value >= 1000) {
@@ -592,7 +561,6 @@
 			//-------------
 			//- DONUT CHART -
 			//-------------
-			// Get context with jQuery - using jQuery's .get() method.
 			var donutChartCanvas = $('#expense_by_category').get(0).getContext('2d')
 			var donutData = {
 				labels: {!! $exp_by_cat_this_month->pluck('category.name') !!},

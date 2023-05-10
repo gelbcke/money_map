@@ -40,12 +40,17 @@ class Bank extends Model
         return $this->belongsTo(Invoice::class);
     }
 
+    public function credit_card()
+    {
+        return $this->belongsTo(CreditCard::class, 'bank_id');
+    }
+
     public function credit_parcels()
     {
         return $this->hasMany(CreditParcels::class, 'bank_id');
     }
 
-    public function credit_card()
+    public function credit_cards()
     {
         return $this->hasMany(CreditCard::class, 'bank_id');
     }

@@ -33,4 +33,9 @@ class Home extends Model
     {
         return $this->belongsTo(Budget::class);
     }
+
+    public function credit_card()
+    {
+        return $this->belongsTo(CreditCard::class, 'bank_id');
+    }
 }

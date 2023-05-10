@@ -30,4 +30,14 @@ class CreditParcels extends Model
     {
         return $this->belongsTo(Expense::class);
     }
+
+    public function credit_card()
+    {
+        return $this->belongsTo(CreditCard::class, 'bank_id');
+    }
+
+    public function credit_cards()
+    {
+        return $this->hasMany(CreditCard::class, 'bank_id');
+    }
 }
