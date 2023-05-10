@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('update_income:cron')->daily();
         $schedule->command('checkinvoicetoclose:cron')->daily();
+        $schedule->command('rec_expenses_to_pay:cron')->daily();
     }
 
     /**
