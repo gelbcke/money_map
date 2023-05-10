@@ -74,16 +74,16 @@
 													{{ $value->name }} <small>({{ $value->user->name }})</small>
 												</td>
 												<td>
-													@if (\Carbon\Carbon::now()->format('d') > $value->credit_card[0]->due_date)
-														{{ \Carbon\Carbon::now()->addMonth()->setDay($value->credit_card[0]->due_date)->format('d/m/Y') }}
+													@if (\Carbon\Carbon::now()->format('d') > $value->credit_cards[0]->due_date)
+														{{ \Carbon\Carbon::now()->addMonth()->setDay($value->credit_cards[0]->due_date)->format('d/m/Y') }}
 														<br>
 													@else
-														{{ \Carbon\Carbon::now()->setDay($value->credit_card[0]->due_date)->format('d/m/Y') }}
+														{{ \Carbon\Carbon::now()->setDay($value->credit_cards[0]->due_date)->format('d/m/Y') }}
 														<br>
 													@endif
 												</td>
 												<td>
-													{{ __('general.M_s') . ' ' . number_format($value->credit_card[0]->credit_limit, 2) }}
+													{{ __('general.M_s') . ' ' . number_format($value->credit_cards[0]->credit_limit, 2) }}
 												</td>
 
 												<td>
@@ -91,12 +91,12 @@
 													    ' ' .
 													    number_format(
 													        $value->credit_parcels->whereBetween('date', [
-													                Carbon\Carbon::now()->startOfMonth()->subMonth(2)->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
-													                Carbon\Carbon::now()->startOfMonth()->subMonth(1)->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
+													                Carbon\Carbon::now()->startOfMonth()->subMonth(2)->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
+													                Carbon\Carbon::now()->startOfMonth()->subMonth(1)->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
 													            ])->where('bank_id', $value->id)->sum('parcel_vl') +
 													            $value->expenses->whereNull('parcels')->whereBetween('date', [
-													                    Carbon\Carbon::now()->startOfMonth()->subMonth(2)->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
-													                    Carbon\Carbon::now()->startOfMonth()->subMonth(1)->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
+													                    Carbon\Carbon::now()->startOfMonth()->subMonth(2)->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
+													                    Carbon\Carbon::now()->startOfMonth()->subMonth(1)->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
 													                ])->where('bank_id', $value->id)->where('payment_method', 1)->sum('value'),
 													        2,
 													    ) }}
@@ -106,12 +106,12 @@
 													    ' ' .
 													    number_format(
 													        $value->credit_parcels->whereBetween('date', [
-													                Carbon\Carbon::now()->startOfMonth()->subMonth()->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
-													                Carbon\Carbon::now()->startOfMonth()->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
+													                Carbon\Carbon::now()->startOfMonth()->subMonth()->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
+													                Carbon\Carbon::now()->startOfMonth()->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
 													            ])->where('bank_id', $value->id)->sum('parcel_vl') +
 													            $value->expenses->whereNull('parcels')->whereBetween('date', [
-													                    Carbon\Carbon::now()->startOfMonth()->subMonth()->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
-													                    Carbon\Carbon::now()->startOfMonth()->setDay($value->credit_card->value('close_invoice'))->format('Y-m-d'),
+													                    Carbon\Carbon::now()->startOfMonth()->subMonth()->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
+													                    Carbon\Carbon::now()->startOfMonth()->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
 													                ])->where('bank_id', $value->id)->where('payment_method', 1)->sum('value'),
 													        2,
 													    ) }}
