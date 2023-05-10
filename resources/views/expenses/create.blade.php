@@ -55,7 +55,7 @@
 								<div class="col-md-2 pr-1">
 									<div class="form-group">
 										<label for="date">{{ __('general.date') }}</label>
-										<input type="date" name="date" class="form-control" value="{{ old('date') ?? date('Y-m-d') }}">
+										<input type="date" name="date" class="form-control" value="{{ old('date') ?? date('Y-m-d') }}" required>
 										@include('alerts.feedback', ['field' => 'date'])
 									</div>
 								</div>
@@ -67,7 +67,7 @@
 												<span class="input-group-text">{{ __('general.M_s') }}</span>
 											</div>
 											<input type="number" min="0" step="0.01" lang="en" name="value" id="value"
-												class="form-control" value="{{ old('value') }}" oninput="calc();">
+												class="form-control" value="{{ old('value') }}" oninput="calc();" required>
 											@include('alerts.feedback', ['field' => 'value'])
 										</div>
 									</div>
@@ -75,7 +75,7 @@
 								<div class="col-md-3 pr-1">
 									<div class="form-group">
 										<label for="budget_id">{{ __('general.menu.budget') }}</label>
-										<select id="budget_id" name="budget_id" class="form-control">
+										<select id="budget_id" name="budget_id" class="form-control" required>
 											<option value=""> --- {{ __('general.menu.select') }} ---</option>
 											@foreach ($budgets as $value)
 												<option value="{{ $value->id }}">{{ $value->name }}</option>
@@ -87,7 +87,7 @@
 								<div class="col-md-4 pr-1">
 									<div class="form-group">
 										<label for="bank_id">{{ __('general.bank') }} / {{ __('general.account') }}</label>
-										<select id="bank_id" name="bank_id" class="form-control">
+										<select id="bank_id" name="bank_id" class="form-control" required>
 											<option value=""> --- {{ __('general.menu.select') }} ---</option>
 											@foreach ($banks as $value)
 												<option value="{{ $value->id }}">
@@ -102,15 +102,15 @@
 								<div class="col-md-12 pr-1">
 									<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
 										<label class="btn btn-secondary">
-											<input type="radio" name="payment_method" id="cred" value="1" autocomplete="off">
+											<input type="radio" name="payment_method" id="cred" value="1" autocomplete="off" required>
 											{{ __('general.credit') }}
 										</label>
 										<label class="btn btn-secondary">
-											<input type="radio" name="payment_method" id="deb" value="2" autocomplete="off">
+											<input type="radio" name="payment_method" id="deb" value="2" autocomplete="off" required>
 											{{ __('general.debit') }}
 										</label>
 										<label class="btn btn-secondary">
-											<input type="radio" name="payment_method" id="cash" value="3" autocomplete="off">
+											<input type="radio" name="payment_method" id="cash" value="3" autocomplete="off" required>
 											{{ __('general.cash') }}
 										</label>
 									</div>

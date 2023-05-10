@@ -55,7 +55,8 @@
 								<div class="col-md-3 pr-1">
 									<div class="form-group">
 										<label for="date">{{ __('general.date') }}</label>
-										<input type="date" name="date" class="form-control" value="{{ $expense->date->format('Y-m-d') }}">
+										<input type="date" name="date" class="form-control" value="{{ $expense->date->format('Y-m-d') }}"
+											required>
 										@include('alerts.feedback', ['field' => 'date'])
 									</div>
 								</div>
@@ -63,15 +64,14 @@
 									<div class="form-group">
 										<label for="value">{{ __('general.value') }}</label>
 										<input type="number" min="1" step="any" name="value" id="value" class="form-control"
-											value="{{ $expense->value }}" oninput="calc();">
+											value="{{ $expense->value }}" oninput="calc();" required>
 										@include('alerts.feedback', ['field' => 'value'])
 									</div>
 								</div>
 								<div class="col-md-4 pr-1">
 									<div class="form-group">
 										<label for="bank_id">{{ __('general.bank') }} / {{ __('general.account') }}</label>
-
-										<select id="bank_id" name="bank_id" class="form-control">
+										<select id="bank_id" name="bank_id" class="form-control" required>
 											<option value=""> --- {{ __('general.menu.select') }} ---</option>
 											@foreach ($banks as $value)
 												<option value="{{ $value->id }}" @if ($expense->bank_id == $value->id) selected @endif>
@@ -86,7 +86,7 @@
 								<div class="col-md-3 pr-1">
 									<div class="form-group">
 										<label for="budget_id">{{ __('general.menu.budget') }}</label>
-										<select id="budget_id" name="budget_id" class="form-control">
+										<select id="budget_id" name="budget_id" class="form-control" required>
 											<option value=""> --- {{ __('general.menu.select') }} ---</option>
 											@foreach ($budgets as $value)
 												<option value="{{ $value->id }}" @if ($expense->budget_id == $value->id) selected @endif>
@@ -100,17 +100,17 @@
 									<div class="btn-group btn-group-toggle btn-block" data-toggle="buttons">
 										<label class="btn btn-secondary">
 											<input type="radio" name="payment_method" id="cred" value="1" autocomplete="off"
-												@if ($expense->payment_method == 1) checked @endif>
+												@if ($expense->payment_method == 1) checked @endif required>
 											{{ __('general.credit') }}
 										</label>
 										<label class="btn btn-secondary">
 											<input type="radio" name="payment_method" id="deb" value="2" autocomplete="off"
-												@if ($expense->payment_method == 2) checked @endif>
+												@if ($expense->payment_method == 2) checked @endif required>
 											{{ __('general.debit') }}
 										</label>
 										<label class="btn btn-secondary">
 											<input type="radio" name="payment_method" id="cash" value="3" autocomplete="off"
-												@if ($expense->payment_method == 3) checked @endif>
+												@if ($expense->payment_method == 3) checked @endif required>
 											{{ __('general.cash') }}
 										</label>
 									</div>
