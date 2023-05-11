@@ -85,7 +85,7 @@
 													<div class="form-group">
 														<label for="due_date">{{ __('bank.due_date') }}</label>
 														<input type="number" name="due_date" class="form-control"
-															value="{{ $bank->credit_card->value('due_date') }}">
+															value="{{ $bank->credit_cards->value('due_date') }}">
 														@include('alerts.feedback', ['field' => 'due_date'])
 													</div>
 												</div>
@@ -93,7 +93,7 @@
 													<div class="form-group">
 														<label for="close_invoice">{{ __('bank.close_invoice') }}</label>
 														<input type="number" name="close_invoice" class="form-control"
-															value="{{ $bank->credit_card->value('close_invoice') }}">
+															value="{{ $bank->credit_cards->value('close_invoice') }}">
 														@include('alerts.feedback', ['field' => 'close_invoice'])
 													</div>
 												</div>
@@ -102,7 +102,7 @@
 													<div class="form-group">
 														<label for="credit_limit">{{ __('bank.credit_limit') }}</label>
 														<input type="number" min="1" step="any" name="credit_limit" class="form-control"
-															value="{{ $bank->credit_card->value('credit_limit') }}">
+															value="{{ $bank->credit_cards->value('credit_limit') }}">
 														@include('alerts.feedback', ['field' => 'credit_limit'])
 													</div>
 												</div>
