@@ -2,15 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Budget;
 use App\Models\Expense;
-use App\Models\UserGroup;
+use App\Models\CreditCard;
 use Illuminate\Http\Request;
+use App\Models\CreditParcels;
+use App\Services\BankService;
+use App\Services\UserService;
+use App\Services\ExpenseService;
+use App\Services\CreditCardService;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\Console\Input\Input;
 
 class BudgetController extends Controller
 {
+    private UserService $userService;
+    private BankService $bankService;
+    private CreditCardService $creditcardService;
+    private ExpenseService $expenseService;
+
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(UserService $userService, CreditCardService $creditcardService, ExpenseService $expenseService, BankService $bankService)
+    {
+        $this->userService = $userService;
+        $this->bankService = $bankService;
+        $this->creditcardService = $creditcardService;
+        $this->expenseService = $expenseService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -253,5 +276,58 @@ class BudgetController extends Controller
 
         return redirect()->route('budgets.create')
             ->with('success', 'Orçamentos Registrados com sucesso!');
+    }
+
+    public function ExpensesOnBudget()
+    {
+        $budgets = Budget::where(function ($query) {
+            $query->where('user_id', Auth::user()->id)
+                ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
+        })
+            ->where('operation', 'OUT')
+            ->where('status', 1)
+            ->get();
+
+        foreach ($budgets as $budget) {
+
+            $rec_exp[] = Expense::where('budget_id', $budget->id)
+                ->whereNotNull('rec_expense')
+                ->get();
+
+            $normal_exp[] = $budget->expenses
+                ->whereNull('parcels')
+                ->whereNull('rec_expense')
+                ->whereBetween('date', [
+                    Carbon::now()->startOfMonth(),
+                    Carbon::now()->endOfMonth()
+                ]);
+
+            $parcels_this_month[] = CreditParcels::join('credit_cards', 'credit_parcels.bank_id', '=', 'credit_cards.bank_id')
+                ->join('banks', 'credit_parcels.bank_id', '=', 'banks.id')
+                ->join('expenses', 'credit_parcels.expense_id', '=', 'expenses.id')
+                ->where('budget_id', $budget->id)
+                ->where(function ($query) {
+                    $query->where('banks.user_id', Auth::user()->id)
+                        ->orWhereIn('banks.group_id', explode(" ", Auth::user()->group_id));
+                })
+                ->where(function ($c) {
+                    $cc = CreditCard::where('bank_id', $c->value('credit_parcels.bank_id'));
+                    $c->whereBetween(
+                        'credit_parcels.date',
+                        [
+                            Carbon::now()->subMonth()->setDay($cc->value('close_invoice')),
+                            Carbon::now()->setDay($cc->value('close_invoice'))
+                        ]
+                    );
+                })
+                ->get(['expenses.budget_id', 'credit_parcels.parcel_vl']);
+        }
+
+        $merge_exp = array_merge($normal_exp,  $parcels_this_month);
+
+        return [
+            'budgets' => $budgets,
+            'budget_expenses' => $merge_exp
+        ];
     }
 }

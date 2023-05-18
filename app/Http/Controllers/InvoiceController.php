@@ -2,17 +2,33 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Bank;
-use App\Models\CreditCard;
-use App\Models\CreditParcels;
 use App\Models\Expense;
 use App\Models\Invoice;
-use Carbon\Carbon;
+use App\Models\CreditCard;
 use Illuminate\Http\Request;
+use App\Models\CreditParcels;
+use App\Services\BankService;
+use App\Services\CreditCardService;
 use Illuminate\Support\Facades\Auth;
 
 class InvoiceController extends Controller
 {
+    private BankService $bankService;
+    private CreditCardService $creditcardService;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(BankService $bankService, CreditCardService $creditcardService)
+    {
+        $this->bankService = $bankService;
+        $this->creditcardService = $creditcardService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -34,7 +50,9 @@ class InvoiceController extends Controller
 
         $now = Carbon::now()->format('m-Y');
 
-        return view('invoices.index', compact('banks', 'now', 'invoices'));
+        $cc_parcels = $this->creditcardService;
+
+        return view('invoices.index', compact('banks', 'now', 'invoices', 'cc_parcels'));
     }
 
     /**
@@ -64,7 +82,7 @@ class InvoiceController extends Controller
      * @param \App\Models\Invoice $invoice
      * @return \Illuminate\Http\Response
      */
-    public function show($id, Request $request)
+    public function show($bank_id, Request $request)
     {
         //
         $dateMonthArray = explode('-', $request->date);
@@ -73,30 +91,50 @@ class InvoiceController extends Controller
         $period = Carbon::createFromDate($year, $month)->startOfMonth();
 
         $user   = Auth::user();
-        $banks  = Bank::where('id', $id)->get();
+        $banks  = Bank::where('id', $bank_id)->get();
 
         foreach ($banks as $bank) {
             $cc_info = CreditCard::where('bank_id', $bank->id);
 
-            $start_date = Carbon::parse($period)->startOfMonth()->subMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
-            $end_date   = Carbon::parse($period)->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
 
             $cc_parcels = CreditParcels::where('bank_id', $bank->id)
-                ->whereBetween('date', [$start_date, $end_date])
+                ->where(function ($c) use ($bank_id) {
+                    $cc = CreditCard::where('bank_id', $bank_id);
+                    $c->whereBetween(
+                        'date',
+                        [
+                            Carbon::now()->subMonth()->setDay($cc->value('close_invoice')),
+                            Carbon::now()->setDay($cc->value('close_invoice'))
+                        ]
+                    );
+                })
                 ->get();
+
 
             $cc_expenses = Expense::where([
                 ['bank_id', $bank->id],
                 ['payment_method', 1],
                 ['parcels', NULL]
             ])
-                ->whereBetween('date', [$start_date, $end_date])
+                ->where(function ($c) use ($bank_id) {
+                    $cc = CreditCard::where('bank_id', $bank_id);
+                    $c->whereBetween(
+                        'date',
+                        [
+                            Carbon::now()->subMonth()->setDay($cc->value('close_invoice')),
+                            Carbon::now()->setDay($cc->value('close_invoice'))
+                        ]
+                    );
+                })
                 ->get();
 
-            $invoices = ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value'));
+
+            $rec_expenses = $this->creditcardService->getCreditCardInvoice($bank_id)['rec_expenses'];
+
+            $invoices = $this->creditcardService->getCreditCardInvoice($bank_id)['total_invoice'];
         }
 
-        return view('invoices.details', compact('request', 'invoices', 'cc_expenses', 'cc_parcels', 'user', 'cc_info', 'period'));
+        return view('invoices.details', compact('request', 'invoices', 'cc_expenses', 'rec_expenses', 'cc_parcels', 'user', 'cc_info', 'period'));
     }
 
     /**

@@ -69,16 +69,7 @@
 													</a>
 												</td>
 												<td>
-													{{ __('general.M_s') .
-													    ' ' .
-													    number_format(
-													        \App\Models\Income::where('bank_id', $value->id)->where('confirmed', 1)->sum('value') -
-													            \App\Models\Expense::whereNull('parcels')->where('bank_id', $value->id)->sum('value') -
-													            (\App\Models\Transfer::where('org_bank_id', $value->id)->sum('value') -
-													                \App\Models\Transfer::where('dest_bank_id', $value->id)->sum('value')),
-													        2,
-													    ) }}
-
+													{{ __('general.M_s') . ' ' . number_format($bank->getBalance($value->id)['balance'], 2) }}
 												</td>
 												<td>
 													{{ $value->payment_method }}

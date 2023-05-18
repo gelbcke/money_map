@@ -1,6 +1,6 @@
 @extends('layouts.app', [
     'class' => 'sidebar-mini ',
-    'namePage' => __('bank.details'),
+    'namePage' => __('general.details'),
     'activePage' => 'banks',
     'activeNav' => '',
 ])
@@ -12,6 +12,10 @@
 			<div class="row mb-2">
 				<div class="col-sm-6">
 					<h1>{{ $bank->name }}</h1>
+					<h6>
+						<b>{{ __('bank.balance') }}:</b>
+						{{ __('general.M_s') . ' ' . number_format($bank_details->getBalance($bank->id)['balance'], 2) }}
+					</h6>
 				</div>
 			</div>
 		</div><!-- /.container-fluid -->
@@ -23,6 +27,7 @@
 				<div class="col-md-12">
 					<div class="card">
 						<div class="card-header">
+
 							<div class="card-tools">
 								<a href="{{ route('banks.index') }}" class="btn btn-sm btn-info">{{ __('general.menu.go_back') }}</a>
 							</div>
@@ -33,7 +38,7 @@
 									<h3 class="card-title">{{ __('bank.credit_card_info') }}</h3>
 									<br>
 									<hr>
-									@foreach ($cc_info->get() as $value)
+									@foreach ($bank->credit_cards as $value)
 										<b>{{ __('bank.credit_limit') }}
 											:</b> {{ __('general.M_s') . ' ' . number_format($value->credit_limit, 2) }}
 										<br>
@@ -109,15 +114,43 @@
 													@endif
 												</td>
 												<td>
-													{{ __('budget.' . $value->budget->name) }}
+													{{ $value->budget->name }}
 												</td>
 												<td>
 													{{ $value->details }}
 												</td>
 											</tr>
 										@endforeach
+										@foreach ($rec_expenses->where('payment_method', 2) as $rec_expense)
+											<tr>
+												<td>
+													{{ $rec_expense->date->format('d/m/Y') }}
+												</td>
+												<td>
+													{{ __('general.M_s') . ' ' . number_format($rec_expense->value, 2) }}
+													<small>
+														<i class="fa fa-repeat" title="Despesas Recorrentes"></i>
+													</small>
+												</td>
+												<td>
+													@if ($rec_expense->category)
+														{{ $rec_expense->category->name }}
+													@endif
+												</td>
+												<td>
+													{{ $rec_expense->budget->name }}
+												</td>
+												<td>
+													{{ $rec_expense->details }}
+												</td>
+											</tr>
+										@endforeach
 									</tbody>
 								</table>
+								<hr>
+								<div class="float-right" style="margin-bottom: 15px; margin-right: 15px">
+									<b>{{ __('general.total') . ': ' . __('general.M_s') . ' ' . number_format($debit_expenses->sum('value') + $rec_expenses->where('payment_method', 2)->sum('value'), 2) }}</b>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -138,6 +171,9 @@
 											{{ __('bank.credit_parcels.parcel_value') }}
 										</th>
 										<th>
+											{{ __('category.title') }}
+										</th>
+										<th>
 											{{ __('general.details') }}
 										</th>
 										<th>
@@ -154,15 +190,24 @@
 													{{ __('general.M_s') . ' ' . number_format($value->parcel_vl, 2) }}
 												</td>
 												<td>
+													@if ($value->category)
+														{{ $value->category->name }}
+													@endif
+												</td>
+												<td>
 													{{ $value->expense->details }}
 												</td>
 												<td>
-													{{ __('budget.' . $value->expense->budget->name) }}
+													{{ $value->expense->budget->name }}
 												</td>
 											</tr>
 										@endforeach
 									</tbody>
 								</table>
+								<hr>
+								<div class="float-right" style="margin-bottom: 15px; margin-right: 15px">
+									<b>{{ __('general.total') . ': ' . __('general.M_s') . ' ' . number_format($cc_parcels->sum('parcel_vl'), 2) }}</b>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -183,6 +228,9 @@
 											{{ __('bank.credit_parcels.parcel_value') }}
 										</th>
 										<th>
+											{{ __('category.title') }}
+										</th>
+										<th>
 											{{ __('general.details') }}
 										</th>
 										<th>
@@ -199,15 +247,48 @@
 													{{ __('general.M_s') . ' ' . number_format($value->value, 2) }}
 												</td>
 												<td>
+													@if ($value->category)
+														{{ $value->category->name }}
+													@endif
+												</td>
+												<td>
 													{{ $value->details }}
 												</td>
 												<td>
-													{{ __('budget.' . $value->budget->name) }}
+													{{ $value->budget->name }}
+												</td>
+											</tr>
+										@endforeach
+										@foreach ($rec_expenses->where('payment_method', 1) as $rec_expense)
+											<tr>
+												<td>
+													{{ $rec_expense->date->format('d/m/Y') }}
+												</td>
+												<td>
+													{{ __('general.M_s') . ' ' . number_format($rec_expense->value, 2) }}
+													<small>
+														<i class="fa fa-repeat" title="Despesas Recorrentes"></i>
+													</small>
+												</td>
+												<td>
+													@if ($rec_expense->category)
+														{{ $rec_expense->category->name }}
+													@endif
+												</td>
+												<td>
+													{{ $rec_expense->details }}
+												</td>
+												<td>
+													{{ $rec_expense->budget->name }}
 												</td>
 											</tr>
 										@endforeach
 									</tbody>
 								</table>
+								<hr>
+								<div class="float-right" style="margin-bottom: 15px; margin-right: 15px">
+									<b>{{ __('general.total') . ': ' . __('general.M_s') . ' ' . number_format($cc_expenses->sum('value') + $rec_expenses->where('payment_method', 1)->sum('value'), 2) }}</b>
+								</div>
 							</div>
 						</div>
 					</div>

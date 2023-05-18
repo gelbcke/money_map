@@ -155,6 +155,36 @@
 								</td>
 							</tr>
 						@endForeach
+						@foreach ($rec_expenses as $value)
+							<tr>
+								<td>
+									{{ $value->date->format('d/m/Y') }}
+								</td>
+								<td style="width: 20%; text-align: center">
+									{{ $value->user->name }}
+								</td>
+								<td tyle="width: 20%; text-align: center">
+									{{ $value->budget->name }}
+								</td>
+								<td tyle="width: 20%; text-align: center">
+									@if ($value->category_id)
+										{{ $value->category->name }}
+									@else
+										{{ __('category.empty') }}
+									@endif
+								</td>
+								<td>
+									{{ $value->details }}
+								</td>
+								<td style="text-align:right">
+									<small>
+										<i class="fa fa-repeat" title="Despesas Recorrentes"> </i>
+									</small>
+									{{ __('general.M_s') . ' ' . number_format($value->value, 2) }}
+								</td>
+							</tr>
+						@endForeach
+
 					</tbody>
 				</table>
 			</div>

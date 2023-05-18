@@ -56,4 +56,14 @@ class Expense extends Model
     {
         return $this->belongsTo(Category::class);
     }
+
+    public function credit_parcels()
+    {
+        return $this->hasMany(CreditParcels::class);
+    }
+
+    public function credit_parcel()
+    {
+        return $this->belongsTo(CreditParcels::class);
+    }
 }

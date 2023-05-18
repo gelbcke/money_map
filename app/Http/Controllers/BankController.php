@@ -2,17 +2,33 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Bank;
-use App\Models\CreditCard;
-use App\Models\CreditParcels;
-use App\Models\Expense;
-use App\Models\Wallet;
 use Carbon\Carbon;
+use App\Models\Bank;
+use App\Models\Wallet;
+use App\Models\Expense;
+use App\Models\CreditCard;
 use Illuminate\Http\Request;
+use App\Models\CreditParcels;
+use App\Services\BankService;
+use App\Services\CreditCardService;
 use Illuminate\Support\Facades\Auth;
 
 class BankController extends Controller
 {
+    private BankService $bankService;
+    private CreditCardService $creditcardService;
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct(BankService $bankService, CreditCardService $creditcardService)
+    {
+        $this->bankService = $bankService;
+        $this->creditcardService = $creditcardService;
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,14 +36,15 @@ class BankController extends Controller
      */
     public function index()
     {
-        //
         $banks = Bank::where(function ($query) {
             $query->where('user_id', Auth::user()->id)
                 ->orWhereIn('group_id', explode(" ", Auth::user()->group_id));
         })
             ->get();
 
-        return view('banks.index', compact('banks'));
+        $bank = $this->bankService;
+
+        return view('banks.index', compact('banks', 'bank'));
     }
 
     /**
@@ -103,33 +120,34 @@ class BankController extends Controller
     public function show(Bank $bank, CreditCard $creditCard)
     {
         //
-        $now = Carbon::now();
-        $today = $now->format('Y-m-d');
-        $thisMonth = $now->format('m');
-        $prevMonth = $now->subMonth()->format('m');
-        $thisYear = $now->format('Y');
+        $bank_details = $this->bankService;
 
-        if ($thisMonth != 1) {
-            $prevYear = $now->format('Y');
-        } else {
-            $prevYear = $now->subYear()->format('Y');
-        }
-
-        $cc_info = CreditCard::where('bank_id', $bank->id);
-
-        $start_date = $now->startOfMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
-        $end_date = $now->startOfMonth()->addMonth()->setDay($cc_info->value('close_invoice'))->format('Y-m-d');
-
-        $cc_parcels = CreditParcels::where('bank_id', $bank->id)
-            ->whereBetween('date', [$start_date, $end_date])
-            ->get();
+        $cc_parcels = $this->creditcardService->getCreditParcelsThisMonth($bank->id);
 
         $cc_expenses = Expense::where([
             ['bank_id', $bank->id],
             ['payment_method', 1],
             ['parcels', NULL]
         ])
-            ->whereBetween('date', [$start_date, $end_date])
+            ->where(function ($c) use ($bank) {
+                $cc = CreditCard::where('bank_id', $bank->id);
+                $c->whereBetween(
+                    'date',
+                    [
+                        Carbon::now()->subMonth()->setDay($cc->value('close_invoice')),
+                        Carbon::now()->setDay($cc->value('close_invoice'))
+                    ]
+                );
+            })
+            ->orderBy('date', 'desc')
+            ->get();
+
+        $rec_expenses = Expense::where([
+            ['bank_id', $bank->id],
+            ['rec_expense', 1],
+            ['parcels', NULL]
+        ])
+            ->orderBy('date', 'desc')
             ->get();
 
         $debit_expenses = Expense::where([
@@ -137,12 +155,20 @@ class BankController extends Controller
             ['payment_method', 2],
             ['parcels', NULL]
         ])
-            ->whereBetween('date', [$start_date, $end_date])
+            ->whereBetween(
+                'date',
+                [
+                    Carbon::now()->startOfMonth(),
+                    Carbon::now()->endOfMonth()
+                ]
+            )
+            ->orderBy('date', 'desc')
             ->get();
 
-        $invoice_this_month = ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value'));
+        //$invoice_this_month = ($cc_parcels->sum('parcel_vl') + $cc_expenses->sum('value'));
+        $invoice_this_month = $this->creditcardService->getCreditCardInvoice($bank->id)['total_invoice'];
 
-        return view('banks.details', compact('bank', 'cc_info', 'creditCard', 'cc_parcels', 'cc_expenses', 'debit_expenses', 'invoice_this_month'));
+        return view('banks.details', compact('bank', 'bank_details',  'rec_expenses', 'creditCard', 'cc_parcels', 'cc_expenses', 'debit_expenses', 'invoice_this_month'));
     }
 
     /**

@@ -58,9 +58,6 @@
 											{{ __('bank.credit_limit') }}
 										</th>
 										<th>
-											{{ __('invoices.value_last_month') }}
-										</th>
-										<th>
 											{{ __('invoices.value_open') }}
 										</th>
 
@@ -87,34 +84,7 @@
 												</td>
 
 												<td>
-													{{ __('general.M_s') .
-													    ' ' .
-													    number_format(
-													        $value->credit_parcels->whereBetween('date', [
-													                Carbon\Carbon::now()->startOfMonth()->subMonth(2)->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
-													                Carbon\Carbon::now()->startOfMonth()->subMonth(1)->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
-													            ])->where('bank_id', $value->id)->sum('parcel_vl') +
-													            $value->expenses->whereNull('parcels')->whereBetween('date', [
-													                    Carbon\Carbon::now()->startOfMonth()->subMonth(2)->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
-													                    Carbon\Carbon::now()->startOfMonth()->subMonth(1)->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
-													                ])->where('bank_id', $value->id)->where('payment_method', 1)->sum('value'),
-													        2,
-													    ) }}
-												</td>
-												<td>
-													{{ __('general.M_s') .
-													    ' ' .
-													    number_format(
-													        $value->credit_parcels->whereBetween('date', [
-													                Carbon\Carbon::now()->startOfMonth()->subMonth()->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
-													                Carbon\Carbon::now()->startOfMonth()->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
-													            ])->where('bank_id', $value->id)->sum('parcel_vl') +
-													            $value->expenses->whereNull('parcels')->whereBetween('date', [
-													                    Carbon\Carbon::now()->startOfMonth()->subMonth()->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
-													                    Carbon\Carbon::now()->startOfMonth()->setDay($value->credit_cards->value('close_invoice'))->format('Y-m-d'),
-													                ])->where('bank_id', $value->id)->where('payment_method', 1)->sum('value'),
-													        2,
-													    ) }}
+													{{ __('general.M_s') . ' ' . number_format($cc_parcels->getCreditCardInvoice($value->id)['total_invoice'], 2) }}
 												</td>
 												<td>
 													<a href="{{ route('invoices.show', [$value->id, 'date' => $now]) }}" target="_blank">
